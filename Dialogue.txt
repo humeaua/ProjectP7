@@ -1,3 +1,0 @@
-06/12/12:11h11: Salut, le crée juste un fichier de discussion histoire qu'on puisse dialoguer et expliquer par exemple ce qu'on vient de rajouter au projet, quelle est la prochaine étape, etc...
-Exemple :
-Prochaine étape : Créer la classe image .
