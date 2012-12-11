@@ -1,19 +1,43 @@
-//
-//  main.cpp
-//  ProjectP7
-//
-//  Created by Alexandre HUMEAU on 03/12/12.
-//  Copyright (c) 2012 __MyCompanyName__. All rights reserved.
-//
-
 #include <iostream>
-#include "Image.h"
+#include <cstdio>
+#include "image.h"
+#include <dirent.h>
 
-int main (int argc, const char * argv[])
+
+using namespace std;
+
+
+void rotateAllImagesInFolder(string inputfolder, string outputfolder)
 {
+	DIR *dp;
+	struct dirent *dirp;
 
-    // insert code here...
-    std::cout << "Hello, World!\n";
-    return 0;
+	if((dp  = opendir(inputfolder.c_str())) == NULL) 
+	{
+	        cout << "Error opening " << inputfolder << endl;
+        	return;
+	}
+
+	while ((dirp = readdir(dp)) != NULL) 
+	{
+		string s(dirp->d_name);
+		if(s.length() > 4)
+		{
+			cout << inputfolder + s << "... ";
+			cout.flush();
+			Image i(inputfolder + s);
+			i.flipHorizontally();
+			i.save(outputfolder + s);
+			cout << "done." << endl;
+		}		
+	}
+
+	closedir(dp);
 }
 
+
+int main(int argc, char *argv[])
+{
+	rotateAllImagesInFolder("inputImages/", "outputImages/");
+	return 0;
+}
