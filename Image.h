@@ -4,7 +4,6 @@
 #include <iostream>
 #include <cstdio>
 
-
 class Image
 {
 private:
@@ -14,17 +13,20 @@ private:
 
 	void load(const std::string & cFilename);
 public: 
+    Image();
 	Image(const std::string & cFilename);
 	Image(int iWidth, int iHeight);
 	Image(Image &img);
 	virtual ~Image();
-	int getWidth();
-	int getHeight();
+	virtual int getWidth();
+	virtual int getHeight();
+    
+    virtual void ResizeandInitialize(int iWidth, int iHeight);
 
-	void save(const std::string & filename);
+	virtual void save(const std::string & filename);
 
-	void flipHorizontally();
-
+	virtual void flipHorizontally();
+    virtual void CutImage(const int iHowMuchCuts, Image sListOfNewImage[]);
 	unsigned char & operator()(int x, int y, int i);
 };
 

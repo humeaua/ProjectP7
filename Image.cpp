@@ -2,7 +2,10 @@
 
 #include "jpeglib.h"
 #include <cstdlib>
+#include <cmath>
 
+Image::Image() : iWidth_(0), iHeight_(0)
+{}
 
 Image::Image(int width, int height)
 {
@@ -152,6 +155,57 @@ void Image::flipHorizontally()
 				(*this)(x,y, c) = (*this)(x,iHeight_-y-1, c);
 				(*this)(x,iHeight_-y-1, c) = d;
 			}
+        }
+    }
+}
+
+void Image::ResizeandInitialize(int iWidth, int iHeight)
+{
+    this->iWidth_ = iWidth;
+	this->iHeight_ = iHeight;
+	cData_ = new unsigned char[3 * iWidth_ * iHeight_];
+	for (int i = 0; i < 3 * iWidth * iHeight; i++)
+    {
+		cData_[i] = 0;
+    }
+}
+
+void Image::CutImage(const int iHowMuchCuts, Image sListOfNewImage[])
+{
+    //  Let us test if iHowMuchCuts is a square
+    double dSqrtCuts = sqrt(iHowMuchCuts);
+    if (sqrt(dSqrtCuts) - (int)floor(sqrt(dSqrtCuts)) != 0)
+    {
+        std::cout << "Number of cuts is not a square" << std::endl;
+        std::cout << "Not yet implemented" << std::endl;
+    }
+    else
+    {
+        int iCut = dSqrtCuts;
+        int iNewHeight = iHeight_ / iCut, iNewWidth = iWidth_ / iCut;
+        sListOfNewImage = new Image[iHowMuchCuts];
+        for (int i = 0 ; i < iHowMuchCuts ; ++i)
+        {
+            sListOfNewImage[i].ResizeandInitialize(iNewWidth, iNewHeight);
+        }
+        
+        /*
+         The images are sorted [1,2,3
+                                4,5,6
+                                7,8,9]
+         */
+        
+        for (int i = 0 ; i < iHeight_ ; ++i)
+        {
+            int iRemainderi = i % iNewHeight, iQuotienti = i / iNewHeight;
+            for (int j = 0 ; j < iWidth_ ; ++j)
+            {
+                int iRemainderj = j % iNewWidth, iQuotientj = j / iNewWidth;
+                for (int c = 0 ; c < 3 ; c++)
+                {
+                    sListOfNewImage[iQuotienti + iQuotientj * iCut](iRemainderi, iRemainderj, c) = (*this)(i,j,c);
+                }
+            }
         }
     }
 }
