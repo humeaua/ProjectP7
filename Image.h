@@ -4,25 +4,24 @@
 #include <iostream>
 #include <cstdio>
 
-using namespace std;
 
 class Image
 {
 private:
-	unsigned char*	data;
-	int	width;
-	int	height;
+	unsigned char*	cData_;
+	int	iWidth_;
+	int	iHeight_;
 
-	void load(string filename);
+	void load(const std::string & cFilename);
 public: 
-	Image(string filename);
-	Image(int width, int height);
+	Image(const std::string & cFilename);
+	Image(int iWidth, int iHeight);
 	Image(Image &img);
-	~Image();
+	virtual ~Image();
 	int getWidth();
 	int getHeight();
 
-	void save(string filename);
+	void save(const std::string & filename);
 
 	void flipHorizontally();
 

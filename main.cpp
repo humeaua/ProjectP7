@@ -3,32 +3,29 @@
 #include "image.h"
 #include <dirent.h>
 
-
-using namespace std;
-
-
-void rotateAllImagesInFolder(string inputfolder, string outputfolder)
+void rotateAllImagesInFolder(std::string inputfolder, std::string outputfolder);
+void rotateAllImagesInFolder(std::string inputfolder, std::string outputfolder)
 {
 	DIR *dp;
 	struct dirent *dirp;
 
 	if((dp  = opendir(inputfolder.c_str())) == NULL) 
 	{
-	        cout << "Error opening " << inputfolder << endl;
+        std::cout << "Error opening " << inputfolder << std::endl;
         	return;
 	}
 
 	while ((dirp = readdir(dp)) != NULL) 
 	{
-		string s(dirp->d_name);
-		if(s.length() > 4)
+        std::string s(dirp->d_name);
+		if(s.length() > 4 && strcmp(".DS_Store", s.c_str()))
 		{
-			cout << inputfolder + s << "... ";
-			cout.flush();
+            std::cout << inputfolder + s << "... ";
+            std::cout.flush();
 			Image i(inputfolder + s);
 			i.flipHorizontally();
 			i.save(outputfolder + s);
-			cout << "done." << endl;
+            std::cout << "done." << std::endl;
 		}		
 	}
 
@@ -38,6 +35,6 @@ void rotateAllImagesInFolder(string inputfolder, string outputfolder)
 
 int main(int argc, char *argv[])
 {
-	rotateAllImagesInFolder("inputImages/", "outputImages/");
+	rotateAllImagesInFolder("/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/", "/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/");
 	return 0;
 }

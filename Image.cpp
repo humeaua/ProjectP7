@@ -1,91 +1,94 @@
 #include "image.h"
 
-#include <jpeglib.h>
+#include "jpeglib.h"
 #include <cstdlib>
 
-using namespace std;
 
 Image::Image(int width, int height)
 {
-	this->width = width;
-	this->height = height;
-	data = new unsigned char[3 * width * height];
+	this->iWidth_ = width;
+	this->iHeight_ = height;
+	cData_ = new unsigned char[3 * iWidth_ * iHeight_];
 	for(int i=0; i < 3*width*height; i ++)
-		data[i] = 0;
+    {
+		cData_[i] = 0;
+    }
 }
 
-Image::Image(string filename)
+Image::Image(const std::string& cFilename)
 {
-	load(filename);
+	load(cFilename);
 }
 
 Image::~Image()
 {
-	delete data;
+	delete cData_;
 }
 
 Image::Image(Image &img)
 {
-	this->width = img.width;
-	this->height = img.height;
-	this->data = new unsigned char[3*width*height];
-	for(int i=0; i < 3*width*height; i ++)
-		this->data[i] = img.data[i];
+	this->iWidth_ = img.iWidth_;
+	this->iHeight_ = img.iHeight_;
+	this->cData_ = new unsigned char[3*iWidth_*iHeight_];
+	for(int i=0; i < 3*iWidth_*iHeight_; i ++)
+    {
+		this->cData_[i] = img.cData_[i];
+    }
 }
 
 int Image::getWidth()
 {
-	return width;
+	return iWidth_;
 }
 
 int Image::getHeight()
 {
-	return height;
+	return iHeight_;
 }
 
 
-void Image::load(string filename)
+void Image::load(const std::string & cFilename)
 {
 	FILE *infile;
-	struct jpeg_decompress_struct cinfo;
-        struct jpeg_error_mgr jerr;
+    jpeg_decompress_struct cinfo;
+    jpeg_error_mgr jerr;
 	JSAMPARRAY buffer;
 
-        cinfo.err = jpeg_std_error(&jerr);
-        jpeg_create_decompress(&cinfo);
+    cinfo.err = jpeg_std_error(&jerr);
+    jpeg_create_decompress(&cinfo);
 
-        if ((infile = fopen(filename.c_str(), "rb")) == NULL) 
+    if ((infile = fopen(cFilename.c_str(), "rb")) == NULL) 
 	{
-            cout << "Can't open " << filename << endl;
-            exit(EXIT_FAILURE);
-        }
+        std::cout << "Can't open " << cFilename << std::endl;
+        exit(EXIT_FAILURE);
+    }
 
 	jpeg_stdio_src(&cinfo, infile);
 	jpeg_read_header(&cinfo, TRUE);
 
-	width = cinfo.image_width;
-	height = cinfo.image_height;
+	iWidth_ = cinfo.image_width;
+	iHeight_ = cinfo.image_height;
 
-	data = new unsigned char[3*width*height];
+	cData_ = new unsigned char[3*iWidth_*iHeight_];
 
-	if(data == NULL)
+	if(cData_ == NULL)
 	{
-		cout << "Error in Memory allocation. " << endl;
+        std::cout << "Error in Memory allocation. " << std::endl;
 		exit(EXIT_FAILURE);
 	}
 
 	jpeg_start_decompress(&cinfo);
 
-	int i = 0;
-
-	buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, width*3, 1);
+    buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, iWidth_*3, 1);
 
 	while (cinfo.output_scanline < cinfo.output_height) 
 	{
 		jpeg_read_scanlines(&cinfo, buffer, 1);
 
-		for(int j=0; j < 3*width; j++)
-			data[(cinfo.output_scanline-1)*3*width + j] = (*buffer)[j];
+		for(int j=0; j < 3*iWidth_; j++)
+        {
+			cData_[(cinfo.output_scanline-1)*3*iWidth_ + j] = (*buffer)[j];
+        }
 	}
 	
 	jpeg_finish_decompress(&cinfo);
@@ -94,26 +97,26 @@ void Image::load(string filename)
 	fclose(infile);
 }
 
-void Image::save(string filename)
+void Image::save(const std::string& cFilename)
 {
 	FILE *outfile;
-	struct jpeg_compress_struct cinfo;
-	struct jpeg_error_mgr jerr;
+    jpeg_compress_struct cinfo;
+    jpeg_error_mgr jerr;
 	JSAMPROW row_pointer;          
 
-	if((outfile = fopen(filename.c_str(), "wb")) == NULL)
+	if((outfile = fopen(cFilename.c_str(), "wb")) == NULL)
 	{
-		cout << "Can't open " << filename << " for saving image." << endl;
+        std::cout << "Can't open " << cFilename << " for saving image." << std::endl;
 		exit(EXIT_FAILURE);
-        }
+    }
 
  
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_compress(&cinfo);
 	jpeg_stdio_dest(&cinfo, outfile);
   
-	cinfo.image_width      = width;
-	cinfo.image_height     = height;
+	cinfo.image_width      = iWidth_;
+	cinfo.image_height     = iHeight_;
 	cinfo.input_components = 3;
 	cinfo.in_color_space   = JCS_RGB;
 
@@ -124,7 +127,7 @@ void Image::save(string filename)
   
 	while (cinfo.next_scanline < cinfo.image_height) 
 	{
-		row_pointer = (JSAMPROW) &data[cinfo.next_scanline*width*3];
+		row_pointer = (JSAMPROW) &cData_[cinfo.next_scanline*iWidth_*3];
 		jpeg_write_scanlines(&cinfo, &row_pointer, 1);
 	}
 
@@ -134,17 +137,21 @@ void Image::save(string filename)
 
 unsigned char & Image::operator()(int x, int y, int i)
 {
-	return data[y*3*width + x*3 + i];
+	return cData_[y*3*iWidth_ + x*3 + i];
 }
 
 void Image::flipHorizontally()
 {
-	for(int y=0; y < height / 2; y ++)
-		for(int x = 0; x < width; x ++)
+	for(int y=0; y < iHeight_ / 2; y ++)
+    {
+		for(int x = 0; x < iWidth_; x ++)
+        {
 			for(int c =0; c < 3; c++)
 			{
 				int d = (*this)(x,y, c);
-				(*this)(x,y, c) = (*this)(x,height-y-1, c);
-				(*this)(x,height-y-1, c) = d;
+				(*this)(x,y, c) = (*this)(x,iHeight_-y-1, c);
+				(*this)(x,iHeight_-y-1, c) = d;
 			}
+        }
+    }
 }
