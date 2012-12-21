@@ -5,8 +5,8 @@
 #include <sstream>
 #include <cmath>
 
-void rotateAllImagesInFolder(std::string inputfolder, std::string outputfolder);
-void rotateAllImagesInFolder(std::string inputfolder, std::string outputfolder)
+void rotateAllImagesInFolder(const std::string & inputfolder, const std::string  & outputfolder);
+void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder)
 {
 	DIR *dp;
 	struct dirent *dirp;
