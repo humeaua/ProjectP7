@@ -1,8 +1,9 @@
-#include "image.h"
+#include "Image.h"
 
 #include "jpeglib.h"
 #include <cstdlib>
 #include <cmath>
+#include <stdexcept>
 
 Image::Image() : iWidth_(0), iHeight_(0)
 {}
@@ -11,7 +12,9 @@ Image::Image(int width, int height)
 {
 	this->iWidth_ = width;
 	this->iHeight_ = height;
-	cData_ = new unsigned char[3 * iWidth_ * iHeight_];
+	//cData_ = new unsigned char[3 * iWidth_ * iHeight_];
+    cData_.reserve(3 * iWidth_ * iHeight_);
+    cData_.resize(3 * iWidth_ * iHeight_);
 	for(int i=0; i < 3*width*height; i ++)
     {
 		cData_[i] = 0;
@@ -25,18 +28,28 @@ Image::Image(const std::string& cFilename)
 
 Image::~Image()
 {
-	delete cData_;
+	//delete cData_;
+    cData_.clear();
 }
 
 Image::Image(Image &img)
 {
 	this->iWidth_ = img.iWidth_;
 	this->iHeight_ = img.iHeight_;
-	this->cData_ = new unsigned char[3*iWidth_*iHeight_];
-	for(int i=0; i < 3*iWidth_*iHeight_; i ++)
-    {
-		this->cData_[i] = img.cData_[i];
-    }
+	//this->cData_ = new unsigned char[3*iWidth_*iHeight_];
+    this->cData_ = img.cData_;
+	//for(int i=0; i < 3*iWidth_*iHeight_; i ++)
+    //{
+	//	this->cData_[i] = img.cData_[i];
+    //}
+}
+
+void Image::Free()
+{
+    //if (cData_) {
+    //    delete cData_;
+    //}
+    cData_.clear();
 }
 
 int Image::getWidth()
@@ -49,6 +62,15 @@ int Image::getHeight()
 	return iHeight_;
 }
 
+void Image::setHeight(const int iHeight)
+{
+    iHeight_ = iHeight;
+}
+
+void Image::setWidth(const int iWidth)
+{
+    iWidth_ = iWidth;
+}
 
 void Image::load(const std::string & cFilename)
 {
@@ -72,13 +94,14 @@ void Image::load(const std::string & cFilename)
 	iWidth_ = cinfo.image_width;
 	iHeight_ = cinfo.image_height;
 
-	cData_ = new unsigned char[3*iWidth_*iHeight_];
+	//cData_ = new unsigned char[3*iWidth_*iHeight_];
+    cData_.resize(3 * iWidth_ * iHeight_);
 
-	if(cData_ == NULL)
-	{
-        std::cout << "Error in Memory allocation. " << std::endl;
-		exit(EXIT_FAILURE);
-	}
+	//if(cData_ == NULL)
+	//{
+    //    std::cout << "Error in Memory allocation. " << std::endl;
+	//	exit(EXIT_FAILURE);
+	//}
 
 	jpeg_start_decompress(&cinfo);
 
@@ -159,22 +182,23 @@ void Image::flipHorizontally()
     }
 }
 
-void Image::ResizeandInitialize(int iWidth, int iHeight)
+/*void Image::ResizeandInitialize(int iWidth, int iHeight)
 {
     this->iWidth_ = iWidth;
 	this->iHeight_ = iHeight;
-	cData_ = new unsigned char[3 * iWidth_ * iHeight_];
-	for (int i = 0; i < 3 * iWidth * iHeight; i++)
+	//cData_ = new unsigned char[3 * iWidth_ * iHeight_];
+    cData_.re
+    for (int i = 0; i < 3 * iWidth * iHeight; i++)
     {
 		cData_[i] = 0;
     }
-}
+}*/
 
-void Image::CutImage(const int iHowMuchCuts, Image sListOfNewImage[])
+void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
 {
     //  Let us test if iHowMuchCuts is a square
     double dSqrtCuts = sqrt(iHowMuchCuts);
-    if (sqrt(dSqrtCuts) - (int)floor(sqrt(dSqrtCuts)) != 0)
+    if (dSqrtCuts - (int)floor(dSqrtCuts) != 0)
     {
         std::cout << "Number of cuts is not a square" << std::endl;
         std::cout << "Not yet implemented" << std::endl;
@@ -183,29 +207,110 @@ void Image::CutImage(const int iHowMuchCuts, Image sListOfNewImage[])
     {
         int iCut = dSqrtCuts;
         int iNewHeight = iHeight_ / iCut, iNewWidth = iWidth_ / iCut;
-        sListOfNewImage = new Image[iHowMuchCuts];
-        for (int i = 0 ; i < iHowMuchCuts ; ++i)
-        {
-            sListOfNewImage[i].ResizeandInitialize(iNewWidth, iNewHeight);
-        }
         
-        /*
-         The images are sorted [1,2,3
-                                4,5,6
-                                7,8,9]
-         */
-        
-        for (int i = 0 ; i < iHeight_ ; ++i)
+        for (int i = 0 ; i < iCut ; ++i)
         {
-            int iRemainderi = i % iNewHeight, iQuotienti = i / iNewHeight;
-            for (int j = 0 ; j < iWidth_ ; ++j)
+            for (int j = 0 ; j < iCut ; ++j)
             {
-                int iRemainderj = j % iNewWidth, iQuotientj = j / iNewWidth;
-                for (int c = 0 ; c < 3 ; c++)
+                Image * pImage = new Image(iNewWidth, iNewHeight);
+                
+                for (int iPixel = 0 ; iPixel < iNewHeight ; ++iPixel)
                 {
-                    sListOfNewImage[iQuotienti + iQuotientj * iCut](iRemainderi, iRemainderj, c) = (*this)(i,j,c);
+                    for (int jPixel = 0 ; jPixel < iNewWidth ; ++jPixel)
+                    {
+                        for (int c = 0 ; c < 3 ; ++c)
+                        {
+                            (*pImage)(jPixel, iPixel, c) = (*this)(jPixel + j * iNewWidth,iPixel + i * iNewHeight, c);
+                        }
+                    }
                 }
+                sListOfNewImage.add(*pImage);
+                //  Free memory
+                delete pImage;
             }
         }
     }
+}
+
+VectorImage::VectorImage() : iCapacity_(1), iSize_(1)
+{}
+
+VectorImage::VectorImage(std::size_t iCapacity) : iCapacity_(iCapacity)
+{}
+
+VectorImage::~VectorImage()
+{
+    if (sList_)
+    {
+        for( std::size_t iSize = 0 ; iSize < iSize_ ; ++iSize)
+        {
+            sList_[iSize].Free();
+        }
+    }
+}
+
+std::size_t VectorImage::getCapacity()
+{
+    return iCapacity_;
+}
+
+std::size_t VectorImage::getSize()
+{
+    return iSize_;
+}
+
+Image& VectorImage::get(std::size_t iIndex)
+{
+    if (iIndex <  iSize_)
+    {
+        return sList_[iIndex];
+    }
+    else
+    {
+        throw std::runtime_error::runtime_error("Cannot access to the desired element");
+    }
+}
+
+void VectorImage::add(Image & newImage)
+{
+    Image* sTmpList = new Image[iSize_ + 1];
+    for (int i = 0 ; i < iSize_ ; i++)
+    {
+        sTmpList[i] = sList_[i];
+    }
+    sList_ = sTmpList;
+    sList_[iSize_] = newImage;
+    iSize_++;
+}
+
+int VectorImage::remove(int iElmt)
+{
+    if (iElmt > iSize_ - 1)
+    {
+        throw std::runtime_error::runtime_error("Try to delete a non-existing element");
+    }
+    
+    for(int i=iElmt; i<iSize_-1; i++)
+    {
+        sList_[i] = sList_[i+1];
+    }
+    iSize_--;
+    // SHRINK
+    if( iSize_*2 == iCapacity_ )
+    {
+        iCapacity_ = iCapacity_/2;
+        Image* tmpList = new Image[iCapacity_];
+        for(int i=0; i<iSize_; i++)
+        {
+            tmpList[i] =  sList_[i];
+        }
+        sList_ = tmpList;
+        iSize_ = iCapacity_;
+    }
+    return 0;
+}
+
+Image & VectorImage::operator()(std::size_t iIndex)
+{
+    return get(iIndex);
 }
