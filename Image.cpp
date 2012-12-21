@@ -46,9 +46,6 @@ Image::Image(Image &img)
 
 void Image::Free()
 {
-    //if (cData_) {
-    //    delete cData_;
-    //}
     cData_.clear();
 }
 
