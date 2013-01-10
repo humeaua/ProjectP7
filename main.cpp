@@ -38,18 +38,22 @@ void rotateAllImagesInFolder(const std::string & inputfolder, const std::string 
 int main(int argc, char *argv[])
 {
 	//rotateAllImagesInFolder("/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/", "/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/");
-    Image sImage("/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/IMG_1291.jpg");
+    Image sImage("/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/2012.jpg");
     
-    int iNbCuts = 9;
-    VectorImage sImageArray(iNbCuts);
-    sImage.CutImage(iNbCuts, sImageArray);
+    //int iNbCuts = 9;
+    //VectorImage sImageArray(iNbCuts);
+    //sImage.CutImage(iNbCuts, sImageArray);
     
-    for (std::size_t i = 0 ; i < iNbCuts ; ++i)
-    {
-        std::stringstream out;
-        out << i;
-        sImageArray(i).save("/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/2012_" + out.str() + ".jpg");
-    }
+    //for (std::size_t i = 0 ; i < iNbCuts ; ++i)
+    //{
+    //    std::stringstream out;
+    //    out << i;
+    //    sImageArray(i).save("/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/2012_" + out.str() + ".jpg");
+    //}
+    Image sResizedImage(200,285);
+    sResizedImage = sImage.Resize(285);
+    
+    sResizedImage.save("/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/2012_Resized.jpg");
     
 	return 0;
 }

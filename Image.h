@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <vector>
 
+//#include <tr1/memory>
+
 class VectorImage;
 
 class Image
@@ -31,10 +33,16 @@ public:
     
     
 	virtual void save(const std::string & filename);
+    
+    //  return an image with the mean colors of (*this)
+    virtual void MeanColors(char * cResult); 
+    
+    virtual Image Resize(const int& iNewWidth);
 
 	virtual void flipHorizontally();
     virtual void CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage);
     unsigned char & operator()(int x, int y, int i);
+    
 };
 
 class VectorImage
@@ -45,6 +53,7 @@ private:
     std::size_t iCapacity_; //capacity of the current array
     std::size_t iSize_;     // number of current records
     Image* sList_;
+    //std::tr1::shared_ptr<Image> sList_;
     
 public:
     VectorImage();

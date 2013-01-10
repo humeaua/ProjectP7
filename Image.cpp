@@ -179,18 +179,6 @@ void Image::flipHorizontally()
     }
 }
 
-/*void Image::ResizeandInitialize(int iWidth, int iHeight)
-{
-    this->iWidth_ = iWidth;
-	this->iHeight_ = iHeight;
-	//cData_ = new unsigned char[3 * iWidth_ * iHeight_];
-    cData_.re
-    for (int i = 0; i < 3 * iWidth * iHeight; i++)
-    {
-		cData_[i] = 0;
-    }
-}*/
-
 void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
 {
     //  Let us test if iHowMuchCuts is a square
@@ -229,10 +217,74 @@ void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
     }
 }
 
+void Image::MeanColors(char* cResult)
+{
+    Image sResult(1,1);
+    long lResult[3] = {0, 0, 0};
+    for (int iPixel = 0 ; iPixel < iWidth_ ; ++iPixel)
+    {
+        for (int jPixel = 0 ; jPixel < iHeight_ ; ++jPixel)
+        {
+            for (int c = 0 ; c < 3 ; ++c)
+            {
+                lResult[c] += (*this)(iPixel, jPixel, c);
+            }
+        }
+    }
+    for (int c = 0 ; c < 3 ; ++c)
+    {
+        lResult[c] /= (iWidth_ * iHeight_);
+    }
+    for (int c = 0 ; c < 3 ; ++c)
+    {
+        cResult[c] = (char)lResult[c];
+    }
+}
+
+Image Image::Resize(const int& iNewWidth)
+{
+    if (iNewWidth > (*this).iWidth_)
+    {
+        std::cout << "Not yet implemented" << std::endl;
+        throw std::runtime_error::runtime_error("Height and Width have to be below Width and Height for now");
+    }
+    else if ((*this).iWidth_ % iNewWidth != 0)
+    {
+        std::cout << "Not yet implemented" << std::endl;
+        throw std::runtime_error::runtime_error("New Width and New Height of image have to be divisors of Height and Width");
+    }
+    else
+    {
+        int iCut = iWidth_ / iNewWidth, iNbCuts = iCut * iCut;
+        Image sResultImage(iNewWidth, iHeight_ / iCut);
+        
+        //  only case implemented for now
+        VectorImage sListOfImage(iNbCuts), sListOfImage2(iNbCuts);
+        this->CutImage(iNbCuts, sListOfImage);
+        for (int i = 0 ; i < iNbCuts ; ++i)
+        {
+            Image sImage = sListOfImage(i);
+            char cResult[3];
+            sImage.MeanColors(cResult); // cResult is an array of size 3
+            int iRemainder = i % iCut, iQuotient = i % iCut;
+            
+            for (int c = 0 ; c < 3 ; ++c)
+            {
+                sResultImage(iQuotient, iRemainder, c) = cResult[c];
+            }
+            
+            //delete cResult;
+        }
+        return sResultImage;
+    }
+    Image sImage;
+    return sImage;
+}
+
 VectorImage::VectorImage() : iCapacity_(1), iSize_(1)
 {}
 
-VectorImage::VectorImage(std::size_t iCapacity) : iCapacity_(iCapacity)
+VectorImage::VectorImage(std::size_t iCapacity) : iCapacity_(iCapacity), iSize_(0)
 {}
 
 VectorImage::~VectorImage()
@@ -270,13 +322,27 @@ Image& VectorImage::get(std::size_t iIndex)
 
 void VectorImage::add(Image & newImage)
 {
-    Image* sTmpList = new Image[iSize_ + 1];
-    for (int i = 0 ; i < iSize_ ; i++)
+    if (iSize_ < iCapacity_)
     {
-        sTmpList[i] = sList_[i];
+        Image* sTmpList = new Image[iSize_ + 1];
+        for (int i = 0 ; i < iSize_ ; i++)
+        {
+            sTmpList[i] = sList_[i];
+        }
+        sList_ = sTmpList;
+        sList_[iSize_] = newImage;
     }
-    sList_ = sTmpList;
-    sList_[iSize_] = newImage;
+    else
+    {
+        iCapacity_ *= 2;
+        Image* tmpList = new Image[iCapacity_];
+        for (int i = 0 ; i < iSize_ ; ++i)
+        {
+            tmpList[i] = sList_[i];
+        }
+        tmpList[iSize_] = newImage;
+        sList_ = tmpList;
+    }
     iSize_++;
 }
 
