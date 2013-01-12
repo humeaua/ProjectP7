@@ -2,8 +2,6 @@
 
 #include "jpeglib.h"
 #include <cstdlib>
-#include <cmath>
-#include <stdexcept>
 #include <dirent.h>
 
 Image::Image() : iWidth_(0), iHeight_(0)
