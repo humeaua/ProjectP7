@@ -7,7 +7,7 @@
 
 //#include <tr1/memory>
 
-class VectorImage;
+//class VectorImage;
 
 class Image
 {
@@ -35,6 +35,7 @@ public:
     static void GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary);
     
     virtual double Diff(Image & sImage);
+    virtual Image ChooseImage(std::vector<Image> & sLibrary);
     virtual Image ChooseImage(const std::string & cFolderName);
     virtual std::vector<std::vector<Image> > cutImage();
     

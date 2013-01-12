@@ -241,6 +241,11 @@ double Image::Diff(Image &img)
 Image Image::ChooseImage(const std::string &cFolderName)
 {
     std::vector<Image> sLibrary = GetFromFolder(cFolderName);
+    return ChooseImage(sLibrary);
+}
+
+Image Image::ChooseImage(std::vector<Image> &sLibrary)
+{
     std::vector<Image>::iterator iter = sLibrary.begin();
     Image sResultImage = *sLibrary.begin();
     double dDiff = Diff(sResultImage);
