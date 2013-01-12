@@ -51,7 +51,7 @@ int main(int argc, char *argv[])
     //    sImageArray(i).save("/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/2012_" + out.str() + ".jpg");
     //}
     Image sResizedImage(200,285);
-    sResizedImage = sImage.Resize(285);
+    //sResizedImage = sImage.Resize(285);
     
     sResizedImage.save("/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/2012_Resized.jpg");
     

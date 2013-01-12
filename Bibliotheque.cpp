@@ -10,7 +10,7 @@
 #include "Bibliotheque.h"
 #include <dirent.h>
 
-Bibliotheque::Bibliotheque() : VectorImage()
+/*Bibliotheque::Bibliotheque() : VectorImage()
 {}
 
 Bibliotheque::~Bibliotheque()
@@ -38,4 +38,4 @@ void Bibliotheque::GetFromFolder(const std::string & cFoldername)
 	}
     
 	closedir(dp);
-}
+}*/

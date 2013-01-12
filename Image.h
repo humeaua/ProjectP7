@@ -35,17 +35,17 @@ public:
 	virtual void save(const std::string & filename);
     
     //  return an image with the mean colors of (*this)
-    virtual void MeanColors(char * cResult); 
+    //virtual void MeanColors(char * cResult); 
     
-    virtual Image Resize(const int& iNewWidth);
+    //virtual Image Resize(const int& iNewWidth);
 
 	virtual void flipHorizontally();
-    virtual void CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage);
+    //virtual void CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage);
     unsigned char & operator()(int x, int y, int i);
     
 };
 
-class VectorImage
+/*class VectorImage
 {
     // In CPP, you have to create a DYNAMIC array of DYNAMIC objects.
     // Otherwise, TA will deduct 35 points.
@@ -68,6 +68,6 @@ public:
     int remove(int productID);
     
     Image & operator()(std::size_t iIndex);
-};
+};*/
 
 #endif

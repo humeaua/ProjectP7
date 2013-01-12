@@ -12,13 +12,13 @@
 #include <iostream>
 #include "Image.h"
 
-class Bibliotheque : public VectorImage
+/*class Bibliotheque : public VectorImage
 {
 public:
     Bibliotheque();
     virtual ~Bibliotheque();
     
     void GetFromFolder(const std::string & cFoldername);
-};
+};*/
 
 #endif

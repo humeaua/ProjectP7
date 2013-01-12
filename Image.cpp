@@ -179,7 +179,7 @@ void Image::flipHorizontally()
     }
 }
 
-void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
+/*void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
 {
     //  Let us test if iHowMuchCuts is a square
     double dSqrtCuts = sqrt(iHowMuchCuts);
@@ -376,4 +376,4 @@ int VectorImage::remove(int iElmt)
 Image & VectorImage::operator()(std::size_t iIndex)
 {
     return get(iIndex);
-}
+}*/
