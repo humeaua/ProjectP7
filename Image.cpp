@@ -32,7 +32,7 @@ Image::~Image()
     cData_.clear();
 }
 
-Image::Image(Image &img)
+Image::Image(const Image &img)
 {
 	this->iWidth_ = img.iWidth_;
 	this->iHeight_ = img.iHeight_;

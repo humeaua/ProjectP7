@@ -22,7 +22,7 @@ public:
     Image();
 	Image(const std::string & cFilename);
 	Image(int iWidth, int iHeight);
-	Image(Image &img);
+	Image(const Image &img);
 	virtual ~Image();
 	virtual int getWidth();
 	virtual int getHeight();
