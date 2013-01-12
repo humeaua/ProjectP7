@@ -48,7 +48,8 @@ public:
 	virtual void flipHorizontally();
     //virtual void CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage);
     unsigned char & operator()(int x, int y, int i);
-    
+    vector<vector<Image> > cutImage();
+    double diff(Image&);
 };
 
 /*class VectorImage
