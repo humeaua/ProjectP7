@@ -251,6 +251,52 @@ void Image::flipHorizontally()
     }
 }
 
+vector<vector<Image> > Image::cutImage()
+{
+	Image element(24,24);
+	vector<Image> lign(width / 24, element);
+	vector<vector<Image> > result(height / 24, lign);
+
+	for(int y = 0; y < width / 24; y ++)
+		for(int x = 0; x < height / 24; x ++)
+			for(int a = 0; a < 24; a ++)
+				for(int b = 0; b < 24; b ++)
+					for(int c = 0; c < 3; c++)
+					{
+						result[x][y](a,b, c)=(*this)(24 * x + a, 24 * y + b, c);
+					}
+
+	return result;
+}
+
+double Image::diff(Image &img)
+{
+	double MSE = 0;
+
+	try
+	{
+		if (img.width != width || img.height != height)
+		{
+			char err=1;
+			throw(err);
+		}
+		else
+		{
+			Image result(width,height);
+			for (int i = 0; i < width; i ++)
+				for (int j = 0; j < height; j ++)
+					for (int c = 0; c < 3; c ++)
+						MSE += ((*this)(i,j,c) - img(i,j,c)) * ((*this)(i,j,c) - img(i,j,c));
+		}
+	}
+	catch(char err)
+	{
+		cout<<"Error, images don't have the same size"<<endl;
+	}
+
+	return MSE;
+}
+
 /*void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
 {
     //  Let us test if iHowMuchCuts is a square
