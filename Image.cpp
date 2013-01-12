@@ -258,6 +258,11 @@ Image Image::ChooseImage(std::vector<Image> &sLibrary)
             dDiff = dDiffNew;
             sResultImage = *iter;
         }
+        //  Stopping condition : in case of the image is already a mosaic
+        if (dDiffNew < 1)
+        {
+            break;
+        }
         iter++;
     }
     return sResultImage;
