@@ -268,6 +268,25 @@ Image Image::ChooseImage(std::vector<Image> &sLibrary)
     return sResultImage;
 }
 
+Image Image::mergeImage(vector<vector<Image> > elements, const string &cFolderName)
+{
+	Image result (elements[0].size() * 24, elements.size() * 24);
+	Image square(24,24);
+
+	for(unsigned int x = 0; x < elements[0].size(); x ++)
+		for(unsigned int y = 0; y < elements[0].size(); y ++)
+		{
+			square = elements[x][y].ChooseImage(cFolderName);
+			for(int a = 0; a < 24; a ++)
+				for(int b = 0; b < 24; b ++)
+					for(int c = 0; c < 3; c++)
+					{
+						result(24 * x + a, 24 * y + b, c) = square(a,b,c);
+					}
+		}
+	return result;
+}
+
 void Image::flipHorizontally()
 {
 	for(int y=0; y < iHeight_ / 2; y ++)
