@@ -38,6 +38,7 @@ public:
     virtual Image ChooseImage(std::vector<Image> & sLibrary);
     virtual Image ChooseImage(const std::string & cFolderName);
     virtual std::vector<std::vector<Image> > cutImage();
+    Image mergeImage(vector<vector<Image> >, const string&);
     
 	virtual void save(const std::string & filename);
     
