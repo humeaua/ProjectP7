@@ -212,8 +212,33 @@ void Image::GetFromFolder(const std::string & cFoldername, std::vector<Image> & 
     cLibrary = GetFromFolder(cFoldername);
 }
 
-double Image::Diff(const Image &sImage) const
-{}
+double Image::Diff(Image &img)
+{
+    double MSE = 0;
+    
+	try
+	{
+		if (img.iWidth_ != iWidth_ || img.iHeight_ != iHeight_)
+		{
+			char err=1;
+			throw(err);
+		}
+		else
+		{
+			Image result(iWidth_,iHeight_);
+			for (int i = 0; i < iWidth_; i ++)
+				for (int j = 0; j < iHeight_; j ++)
+					for (int c = 0; c < 3; c ++)
+						MSE += ((*this)(i,j,c) - img(i,j,c)) * ((*this)(i,j,c) - img(i,j,c));
+		}
+	}
+	catch(char err)
+	{
+		std::cout<<"Error, images don't have the same size"<<std::endl;
+	}
+    
+	return MSE;
+}
 
 Image Image::ChooseImage(const std::string &cFolderName)
 {
@@ -251,11 +276,11 @@ void Image::flipHorizontally()
     }
 }
 
-vector<vector<Image> > Image::cutImage()
+/*std::vector<std::vector<Image> > Image::cutImage()
 {
 	Image element(24,24);
-	vector<Image> lign(width / 24, element);
-	vector<vector<Image> > result(height / 24, lign);
+    std::vector<Image> lign(width / 24, element);
+    std::vector<std::vector<Image> > result(height / 24, lign);
 
 	for(int y = 0; y < width / 24; y ++)
 		for(int x = 0; x < height / 24; x ++)
@@ -267,9 +292,9 @@ vector<vector<Image> > Image::cutImage()
 					}
 
 	return result;
-}
+}*/
 
-double Image::diff(Image &img)
+/*double Image::diff(Image &img)
 {
 	double MSE = 0;
 
@@ -295,7 +320,7 @@ double Image::diff(Image &img)
 	}
 
 	return MSE;
-}
+}*/
 
 /*void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
 {

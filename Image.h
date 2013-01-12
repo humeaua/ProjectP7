@@ -34,7 +34,7 @@ public:
     static std::vector<Image> GetFromFolder(const std::string & cFoldername);
     static void GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary);
     
-    virtual double Diff(const Image & sImage) const;
+    virtual double Diff(Image & sImage);
     virtual Image ChooseImage(const std::string & cFolderName);
     virtual std::vector<std::vector<Image> > cutImage();
     
@@ -48,8 +48,8 @@ public:
 	virtual void flipHorizontally();
     //virtual void CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage);
     unsigned char & operator()(int x, int y, int i);
-    vector<vector<Image> > cutImage();
-    double diff(Image&);
+    //vector<vector<Image> > cutImage();
+    //double diff(Image&);
 };
 
 /*class VectorImage
