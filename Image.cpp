@@ -164,6 +164,24 @@ unsigned char & Image::operator()(int x, int y, int i)
 	return cData_[y*3*iWidth_ + x*3 + i];
 }
 
+std::vector<std::vector<Image> > Image::cutImage()
+{
+    Image element(24,24);
+    std::vector<Image> lign(iWidth_ / 24, element);
+    std::vector<std::vector<Image> > result(iHeight_ / 24, lign);
+    
+    for(int y = 0; y < iWidth_ / 24; y ++)
+        for(int x = 0; x < iHeight_ / 24; x ++)
+            for(int a = 0; a < 24; a ++)
+                for(int b = 0; b < 24; b ++)
+                    for(int c = 0; c < 3; c++)
+                    {
+                        result[x][y](a,b, c)=(*this)(24 * x + a, 24 * y + b, c);
+                    }
+    
+    return result;
+}
+
 std::vector<Image> Image::GetFromFolder(const std::string & cFoldername)
 {
     std::vector<Image> sResult;
@@ -192,6 +210,29 @@ std::vector<Image> Image::GetFromFolder(const std::string & cFoldername)
 void Image::GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary)
 {
     cLibrary = GetFromFolder(cFoldername);
+}
+
+double Image::Diff(const Image &sImage) const
+{}
+
+Image Image::ChooseImage(const std::string &cFolderName)
+{
+    std::vector<Image> sLibrary = GetFromFolder(cFolderName);
+    std::vector<Image>::iterator iter = sLibrary.begin();
+    Image sResultImage = *sLibrary.begin();
+    double dDiff = Diff(sResultImage);
+    iter++;
+    while (iter != sLibrary.end()) 
+    {
+        double dDiffNew = Diff(*iter);
+        if (dDiffNew < dDiff)
+        {
+            dDiff = dDiffNew;
+            sResultImage = *iter;
+        }
+        iter++;
+    }
+    return sResultImage;
 }
 
 void Image::flipHorizontally()

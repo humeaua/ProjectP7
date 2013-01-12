@@ -34,6 +34,10 @@ public:
     static std::vector<Image> GetFromFolder(const std::string & cFoldername);
     static void GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary);
     
+    virtual double Diff(const Image & sImage) const;
+    virtual Image ChooseImage(const std::string & cFolderName);
+    virtual std::vector<std::vector<Image> > cutImage();
+    
 	virtual void save(const std::string & filename);
     
     //  return an image with the mean colors of (*this)
