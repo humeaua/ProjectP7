@@ -4,6 +4,7 @@
 #include <cstdlib>
 #include <cmath>
 #include <stdexcept>
+#include <dirent.h>
 
 Image::Image() : iWidth_(0), iHeight_(0)
 {}
@@ -161,6 +162,36 @@ void Image::save(const std::string& cFilename)
 unsigned char & Image::operator()(int x, int y, int i)
 {
 	return cData_[y*3*iWidth_ + x*3 + i];
+}
+
+std::vector<Image> Image::GetFromFolder(const std::string & cFoldername)
+{
+    std::vector<Image> sResult;
+    DIR *dp;
+	struct dirent *dirp;
+    
+	if((dp  = opendir(cFoldername.c_str())) == NULL) 
+	{
+        throw "Error opening " + cFoldername;
+	}
+    
+	while ((dirp = readdir(dp)) != NULL) 
+	{
+        std::string s(dirp->d_name);
+		if(s.length() > 4 && strcmp(".DS_Store", s.c_str()))
+		{
+            Image sImage(cFoldername + s);
+            sResult.push_back(sImage);
+		}		
+	}
+    
+	closedir(dp);
+    return sResult;
+}
+
+void Image::GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary)
+{
+    cLibrary = GetFromFolder(cFoldername);
 }
 
 void Image::flipHorizontally()

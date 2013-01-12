@@ -31,6 +31,8 @@ public:
     virtual void setWidth(const int iWidth);
     virtual void setHeight(const int iHeight);
     
+    static std::vector<Image> GetFromFolder(const std::string & cFoldername);
+    static void GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary);
     
 	virtual void save(const std::string & filename);
     
