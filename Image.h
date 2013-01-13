@@ -8,6 +8,8 @@
 
 //class VectorImage;
 
+unsigned char myMean(std::vector<unsigned char> & cVect);
+
 class Image
 {
 private:
@@ -40,6 +42,7 @@ public:
     Image mergeImage(std::vector<std::vector<Image> >&, const std::string&);
     char Mean(unsigned char*, int, int);
     Image Resize24();
+    Image Resize();
     
 	virtual void save(const std::string & filename);
     

@@ -4,6 +4,24 @@
 #include <cstdlib>
 #include <dirent.h>
 
+unsigned char myMean(std::vector<unsigned char> & cVect)
+{
+    std::vector<unsigned char>::iterator itermin = std::min_element(cVect.begin(), cVect.end()), itermax = std::max_element(cVect.begin(), cVect.end());
+    unsigned char cMin = *itermin, cMax = *itermax;
+    while (cMin + 1 != cMax && cMin != cMax)
+    {
+        *itermin += 1;
+        *itermax -= 1;
+        
+        itermin = std::min_element(cVect.begin(), cVect.end());
+        itermax = std::max_element(cVect.begin(), cVect.end());
+        
+        cMax = *itermax;
+        cMin = *itermin;
+    }
+    return cMax;
+}
+
 Image::Image() : iWidth_(0), iHeight_(0)
 {}
 
@@ -349,6 +367,24 @@ Image Image::Resize24()
 				//result(x, y, c) = Mean(cData_ + ((iWidth_ / 24) * x) + iWidth_ * ((iHeight_ / 24) * y), 24, iWidth_);
 
 	return result;
+}
+
+//  Function to resize an image of size iWidth * iHeight into a 24 * 24 one
+Image Image::Resize()
+{
+    Image sResult(24, 24);
+    
+    for (int a = 0 ; a < 24 ; ++a)
+        for (int b = 0 ; b < 24 ; ++b)
+            for (int c = 0; c < 3 ; ++c)
+            {
+                std::vector<unsigned char> cVect;
+                for (int y = 0 ; y < iWidth_ / 24 ; ++y)
+                    for (int x = 0 ; x < iHeight_ / 24 ; ++x)
+                        cVect.push_back((*this)(a * iHeight_ / 24 + x, b * iWidth_ / 24 + y,c));
+                sResult(a,b,c) = myMean(cVect);
+            }
+    return sResult;
 }
 
 /*std::vector<std::vector<Image> > Image::cutImage()
