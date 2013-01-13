@@ -4,6 +4,7 @@
 #include <dirent.h>
 #include <sstream>
 #include <cmath>
+#include <time.h>
 
 void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder);
 void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder)
@@ -65,16 +66,60 @@ void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfold
 
 }
 
+void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfolder, std::vector<Image> & sLibrary);
+void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfolder, std::vector<Image> & sLibrary)
+{
+	DIR *dp;
+	struct dirent *dirp;
+    
+	if((dp  = opendir(inputfolder.c_str())) == NULL) 
+	{
+        std::cout << "Error opening " << inputfolder << std::endl;
+        return;
+	}
+	while ((dirp = readdir(dp)) != NULL) 
+	{
+		std::string s(dirp->d_name);
+		if(s.length() > 4)
+		{
+			std::cout << inputfolder + s << "... ";
+			std::cout.flush();
+			Image i(inputfolder + s);
+			Image j((i.getWidth() / 24) * 24, (i.getHeight() / 24) * 24);
+            std::vector<std::vector<Image> > sVectofImage = i.cutImage();
+			j = i.mergeImage(sVectofImage, sLibrary);
+			j.save(outputfolder + s);
+			std::cout << "done." << std::endl;
+		}		
+	}
+    
+	closedir(dp);
+    
+}
+
 
 int main(int argc, char *argv[])
 {
 	//rotateAllImagesInFolder("/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/", "/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/");
     //Image sImage("/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/2012.jpg");
-    std::string cFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/";
+    clock_t start = clock();
+    std::string cLibraryInputName = "/Users/alexhum49/Documents/Workspace/ProjectP7/LibraryinputImages/",
+                cLibraryOutputName = "/Users/alexhum49/Documents/Workspace/ProjectP7/LibraryImages/",
+                cInputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/",
+                cOutputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/";
     //std::vector<Image> sVectImage = Image::GetFromFolder(cFolderName);
-    std::vector<Image> sVectImage;
-    Image::GetFromFolder(cFolderName, sVectImage);
+    std::vector<Image> sLibrary;
+    Image::GetFromFolder(cLibraryInputName, sLibrary);
     
+    /*for (std::size_t i = 0 ; i < sLibrary.size() ; ++i)
+    {
+        std::stringstream ss;
+        ss << i;
+        std::string cOut = ss.str();
+        
+        sLibrary[i].save(cLibraryName + cOut + ".jpg");
+    }*/
+    mosaiqueAllImagesInFolder(cInputFolderName, cOutputFolderName, sLibrary);
     //int iNbCuts = 9;
     //VectorImage sImageArray(iNbCuts);
     //sImage.CutImage(iNbCuts, sImageArray);
@@ -89,6 +134,6 @@ int main(int argc, char *argv[])
     //sResizedImage = sImage.Resize(285);
     
     //sResizedImage.save("/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/2012_Resized.jpg");
-    
+    std::cout << "Total time elapsed : " << (double)(clock() - start) / CLOCKS_PER_SEC << " seconds."<< std::endl;
 	return 0;
 }

@@ -306,6 +306,25 @@ Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::
 	return result;
 }
 
+Image Image::mergeImage(std::vector<std::vector<Image> > & elements, std::vector<Image> & sLibrary)
+{
+	Image result ((int)elements[0].size() * 24, (int)elements.size() * 24);
+	Image square(24,24);
+    
+	for(unsigned int x = 0; x < elements[0].size(); x ++)
+		for(unsigned int y = 0; y < elements[0].size(); y ++)
+		{
+			square = elements[x][y].ChooseImage(sLibrary);
+			for(int a = 0; a < 24; a ++)
+				for(int b = 0; b < 24; b ++)
+					for(int c = 0; c < 3; c++)
+					{
+						result(24 * x + a, 24 * y + b, c) = square(a,b,c);
+					}
+		}
+	return result;
+}
+
 void Image::flipHorizontally()
 {
 	for(int y=0; y < iHeight_ / 2; y ++)
@@ -351,7 +370,7 @@ char Image::Mean(unsigned char* cColors, int iSize, int iStep)
 	return *(cColors);
 }
 
-Image Image::Resize24()
+/*Image Image::Resize24()
 {
 	Image result(24,24);
 
@@ -367,10 +386,10 @@ Image Image::Resize24()
 				//result(x, y, c) = Mean(cData_ + ((iWidth_ / 24) * x) + iWidth_ * ((iHeight_ / 24) * y), 24, iWidth_);
 
 	return result;
-}
+}*/
 
 //  Function to resize an image of size iWidth * iHeight into a 24 * 24 one
-Image Image::Resize()
+Image Image::Resize24()
 {
     Image sResult(24, 24);
     
@@ -403,9 +422,9 @@ Image Image::Resize()
 					}
 
 	return result;
-}*/
+}
 
-/*double Image::diff(Image &img)
+double Image::diff(Image &img)
 {
 	double MSE = 0;
 
@@ -431,9 +450,9 @@ Image Image::Resize()
 	}
 
 	return MSE;
-}*/
+}
 
-/*void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
+void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
 {
     //  Let us test if iHowMuchCuts is a square
     double dSqrtCuts = sqrt(iHowMuchCuts);

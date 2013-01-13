@@ -40,9 +40,10 @@ public:
     virtual Image ChooseImage(const std::string & cFolderName);
     virtual std::vector<std::vector<Image> > cutImage();
     Image mergeImage(std::vector<std::vector<Image> >&, const std::string&);
+    Image mergeImage(std::vector<std::vector<Image> >&, std::vector<Image> & sLibrary);
     char Mean(unsigned char*, int, int);
     Image Resize24();
-    Image Resize();
+    //Image Resize();
     
 	virtual void save(const std::string & filename);
     
