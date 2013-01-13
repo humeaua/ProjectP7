@@ -109,16 +109,21 @@ int main(int argc, char *argv[])
                 cOutputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/";
     //std::vector<Image> sVectImage = Image::GetFromFolder(cFolderName);
     std::vector<Image> sLibrary;
+    std::cout << "Loading Library" << std::endl;
     Image::GetFromFolder(cLibraryInputName, sLibrary);
+    std::cout << "End of Loading Library" << std::endl;
+    std::cout << "Time elapsed : " << (double)(clock() - start) / CLOCKS_PER_SEC << std::endl;
     
-    /*for (std::size_t i = 0 ; i < sLibrary.size() ; ++i)
+    /*std::cout << "Saving Library" << std::endl;
+    for (std::size_t i = 0 ; i < sLibrary.size() ; ++i)
     {
         std::stringstream ss;
         ss << i;
         std::string cOut = ss.str();
         
-        sLibrary[i].save(cLibraryName + cOut + ".jpg");
-    }*/
+        sLibrary[i].save(cLibraryOutputName + cOut + ".jpg");
+    }
+    std::cout << "Library saved" << std::endl;*/
     mosaiqueAllImagesInFolder(cInputFolderName, cOutputFolderName, sLibrary);
     //int iNbCuts = 9;
     //VectorImage sImageArray(iNbCuts);
@@ -135,5 +140,6 @@ int main(int argc, char *argv[])
     
     //sResizedImage.save("/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/2012_Resized.jpg");
     std::cout << "Total time elapsed : " << (double)(clock() - start) / CLOCKS_PER_SEC << " seconds."<< std::endl;
+    sLibrary.clear();
 	return 0;
 }

@@ -183,15 +183,11 @@ unsigned char & Image::operator()(int x, int y, int i)
 std::vector<std::vector<Image> > Image::cutImage()
 {
     Image element(24,24);
-    //std::vector<Image> lign(iWidth_ / 24, element);
     std::vector<Image> lign(iHeight_ / 24, element);
-    //std::vector<std::vector<Image> > result(iHeight_ / 24, lign);
     std::vector<std::vector<Image> > result(iWidth_ / 24, lign);
     
-    //for(int y = 0; y < iWidth_ / 24; y ++)
     for (int y = 0 ; y < iHeight_ / 24 ; ++y)
         for (int x = 0 ; x < iWidth_ / 24 ; ++x)
-        //for(int x = 0; x < iHeight_ / 24; x ++)
             for(int a = 0; a < 24; a ++)
                 for(int b = 0; b < 24; b ++)
                     for(int c = 0; c < 3; c++)
@@ -409,9 +405,9 @@ Image Image::Resize24()
             for (int c = 0; c < 3 ; ++c)
             {
                 std::vector<unsigned char> cVect;
-                for (int y = 0 ; y < iWidth_ / 24 ; ++y)
-                    for (int x = 0 ; x < iHeight_ / 24 ; ++x)
-                        cVect.push_back((*this)(a * iHeight_ / 24 + x, b * iWidth_ / 24 + y,c));
+                for (int y = 0 ; y < iHeight_ / 24 ; ++y)
+                    for (int x = 0 ; x < iWidth_ / 24 ; ++x)
+                        cVect.push_back((*this)(a * iWidth_ / 24 + x, b * iHeight_ / 24 + y,c));
                 sResult(a,b,c) = myMean(cVect);
             }
     return sResult;
