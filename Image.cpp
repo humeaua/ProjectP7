@@ -197,7 +197,8 @@ std::vector<Image> Image::GetFromFolder(const std::string & cFoldername)
 		if(s.length() > 4 && strcmp(".DS_Store", s.c_str()))
 		{
             Image sImage(cFoldername + s);
-            sResult.push_back(sImage);
+            Image sImage24 = sImage.Resize24();
+            sResult.push_back(sImage24);
 		}		
 	}
     
@@ -301,6 +302,54 @@ void Image::flipHorizontally()
 			}
         }
     }
+}
+
+char Image::Mean(unsigned char* cColors, int iSize, int iStep)
+{
+	unsigned char min = *cColors;
+	int minindex = 0;
+	unsigned char max = *cColors;
+	int maxindex = 0;
+
+	do
+	{
+		for(int i = 0; i < iSize; i+=iStep)
+		{
+			if (min > *(cColors + i))
+			{
+				min = *(cColors + i);
+				minindex = i;
+			}
+			if (max < *(cColors + i))
+			{
+				max = *(cColors + i);
+				maxindex = i;
+			};
+		}
+		*(cColors + minindex)+=1;
+		*(cColors + maxindex)-=1;
+
+	} while (max > min + 1);
+	return *(cColors);
+}
+
+Image Image::Resize24()
+{
+	Image result(24,24);
+
+	for(int y = 0; y < height; y ++)
+		for(int x = 0; x < 24; x ++)
+			for(int a = 0; a < width / 24; a ++)
+				for(int c = 0; c < 3; c++)
+				{
+					(*this)(x * (width / 24) + a, y, c) = Mean(data + ((width / 24) * x), 24, 3);
+				}
+	for(int y = 0; y < 24; y ++)
+		for(int x = 0; x < 24; x ++)
+			for(int c = 0; c < 3; c++)
+				result(x, y, c) = Mean(data + ((width / 24) * x) + width * ((height / 24) * y), 24, width);
+
+	return result;
 }
 
 /*std::vector<std::vector<Image> > Image::cutImage()
