@@ -4,9 +4,6 @@
 #include <iostream>
 #include <cstdio>
 #include <vector>
-
-using namespace std;
-
 //#include <tr1/memory>
 
 //class VectorImage;
@@ -40,7 +37,7 @@ public:
     virtual Image ChooseImage(std::vector<Image> & sLibrary);
     virtual Image ChooseImage(const std::string & cFolderName);
     virtual std::vector<std::vector<Image> > cutImage();
-    Image mergeImage(vector<vector<Image> >, const string&);
+    Image mergeImage(std::vector<std::vector<Image> >&, const std::string&);
     char Mean(unsigned char*, int, int);
     Image Resize24();
     

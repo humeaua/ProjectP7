@@ -5,6 +5,7 @@
 #include <sstream>
 #include <cmath>
 
+void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder);
 void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder)
 {
 	DIR *dp;
@@ -33,28 +34,30 @@ void rotateAllImagesInFolder(const std::string & inputfolder, const std::string 
 	closedir(dp);
 }
 
-void mosaiqueAllImagesInFolder(string inputfolder, string outputfolder, string libraryfolder)
+void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfolder, std::string& libraryfolder);
+void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfolder, std::string& libraryfolder)
 {
 	DIR *dp;
 	struct dirent *dirp;
 
 	if((dp  = opendir(inputfolder.c_str())) == NULL) 
 	{
-	        cout << "Error opening " << inputfolder << endl;
+        std::cout << "Error opening " << inputfolder << std::endl;
         	return;
 	}
 	while ((dirp = readdir(dp)) != NULL) 
 	{
-		string s(dirp->d_name);
+		std::string s(dirp->d_name);
 		if(s.length() > 4)
 		{
-			cout << inputfolder + s << "... ";
-			cout.flush();
+			std::cout << inputfolder + s << "... ";
+			std::cout.flush();
 			Image i(inputfolder + s);
 			Image j((i.getWidth() / 24) * 24, (i.getHeight() / 24) * 24);
-			j = i.mergeImage(i.cutImage(), libraryfolder);
+            std::vector<std::vector<Image> > sVectofImage = i.cutImage();
+			j = i.mergeImage(sVectofImage, libraryfolder);
 			j.save(outputfolder + s);
-			cout << "done." << endl;
+			std::cout << "done." << std::endl;
 		}		
 	}
 

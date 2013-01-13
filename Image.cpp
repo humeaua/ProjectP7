@@ -269,9 +269,9 @@ Image Image::ChooseImage(std::vector<Image> &sLibrary)
     return sResultImage;
 }
 
-Image Image::mergeImage(vector<vector<Image> > elements, const string &cFolderName)
+Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::string &cFolderName)
 {
-	Image result (elements[0].size() * 24, elements.size() * 24);
+	Image result ((int)elements[0].size() * 24, (int)elements.size() * 24);
 	Image square(24,24);
 
 	for(unsigned int x = 0; x < elements[0].size(); x ++)
