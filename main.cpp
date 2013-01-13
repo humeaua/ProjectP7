@@ -5,7 +5,6 @@
 #include <sstream>
 #include <cmath>
 
-void rotateAllImagesInFolder(const std::string & inputfolder, const std::string  & outputfolder);
 void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder)
 {
 	DIR *dp;
@@ -32,6 +31,35 @@ void rotateAllImagesInFolder(const std::string & inputfolder, const std::string 
 	}
     
 	closedir(dp);
+}
+
+void mosaiqueAllImagesInFolder(string inputfolder, string outputfolder, string libraryfolder)
+{
+	DIR *dp;
+	struct dirent *dirp;
+
+	if((dp  = opendir(inputfolder.c_str())) == NULL) 
+	{
+	        cout << "Error opening " << inputfolder << endl;
+        	return;
+	}
+	while ((dirp = readdir(dp)) != NULL) 
+	{
+		string s(dirp->d_name);
+		if(s.length() > 4)
+		{
+			cout << inputfolder + s << "... ";
+			cout.flush();
+			Image i(inputfolder + s);
+			Image j((i.getWidth() / 24) * 24, (i.getHeight() / 24) * 24);
+			j = i.mergeImage(i.cutImage(), libraryfolder);
+			j.save(outputfolder + s);
+			cout << "done." << endl;
+		}		
+	}
+
+	closedir(dp);
+
 }
 
 
