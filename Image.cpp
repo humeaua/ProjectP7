@@ -341,12 +341,12 @@ Image Image::Resize24()
 		for(int x = 0; x < 24; x ++)
 			for(int a = 0; a < iWidth_ / 24; a ++)
 				for(int c = 0; c < 3; c++)
-					(*this)(x * (iWidth_ / 24) + a, y, c) = Mean(cData_ + ((iWidth_ / 24) * x), 24, 3);
+					//(*this)(x * (iWidth_ / 24) + a, y, c) = Mean(cData_ + ((iWidth_ / 24) * x), 24, 3);
 
 	for(int y = 0; y < 24; y ++)
 		for(int x = 0; x < 24; x ++)
 			for(int c = 0; c < 3; c++)
-				result(x, y, c) = Mean(cData_ + ((iWidth_ / 24) * x) + iWidth_ * ((iHeight_ / 24) * y), 24, iWidth_);
+				//result(x, y, c) = Mean(cData_ + ((iWidth_ / 24) * x) + iWidth_ * ((iHeight_ / 24) * y), 24, iWidth_);
 
 	return result;
 }

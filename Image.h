@@ -5,6 +5,8 @@
 #include <cstdio>
 #include <vector>
 
+using namespace std;
+
 //#include <tr1/memory>
 
 //class VectorImage;
