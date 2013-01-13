@@ -22,6 +22,17 @@ unsigned char myMean(std::vector<unsigned char> & cVect)
     return cMax;
 }
 
+unsigned char myMean2(std::vector<unsigned char> & cVect)
+{
+    long long lResult = 0;
+    for (std::vector<unsigned char>::iterator it = cVect.begin() ; it != cVect.end() ; ++it)
+    {
+        lResult += *it;
+    }
+    lResult /= cVect.size();
+    return (char)lResult;
+}
+
 Image::Image() : iWidth_(0), iHeight_(0)
 {}
 
@@ -408,7 +419,8 @@ Image Image::Resize24()
                 for (int y = 0 ; y < iHeight_ / 24 ; ++y)
                     for (int x = 0 ; x < iWidth_ / 24 ; ++x)
                         cVect.push_back((*this)(a * iWidth_ / 24 + x, b * iHeight_ / 24 + y,c));
-                sResult(a,b,c) = myMean(cVect);
+                //sResult(a,b,c) = myMean(cVect);
+                sResult(a,b,c) = myMean2(cVect);
             }
     return sResult;
 }

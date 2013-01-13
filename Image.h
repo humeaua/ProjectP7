@@ -9,6 +9,7 @@
 //class VectorImage;
 
 unsigned char myMean(std::vector<unsigned char> & cVect);
+unsigned char myMean2(std::vector<unsigned char> & cVect);
 
 class Image
 {
