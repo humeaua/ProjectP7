@@ -183,11 +183,15 @@ unsigned char & Image::operator()(int x, int y, int i)
 std::vector<std::vector<Image> > Image::cutImage()
 {
     Image element(24,24);
-    std::vector<Image> lign(iWidth_ / 24, element);
-    std::vector<std::vector<Image> > result(iHeight_ / 24, lign);
+    //std::vector<Image> lign(iWidth_ / 24, element);
+    std::vector<Image> lign(iHeight_ / 24, element);
+    //std::vector<std::vector<Image> > result(iHeight_ / 24, lign);
+    std::vector<std::vector<Image> > result(iWidth_ / 24, lign);
     
-    for(int y = 0; y < iWidth_ / 24; y ++)
-        for(int x = 0; x < iHeight_ / 24; x ++)
+    //for(int y = 0; y < iWidth_ / 24; y ++)
+    for (int y = 0 ; y < iHeight_ / 24 ; ++y)
+        for (int x = 0 ; x < iWidth_ / 24 ; ++x)
+        //for(int x = 0; x < iHeight_ / 24; x ++)
             for(int a = 0; a < 24; a ++)
                 for(int b = 0; b < 24; b ++)
                     for(int c = 0; c < 3; c++)
@@ -215,8 +219,15 @@ std::vector<Image> Image::GetFromFolder(const std::string & cFoldername)
 		if(s.length() > 4 && strcmp(".DS_Store", s.c_str()))
 		{
             Image sImage(cFoldername + s);
-            Image sImage24 = sImage.Resize24();
-            sResult.push_back(sImage24);
+            if (sImage.getWidth() == 24 && sImage.getHeight() == 24)
+            {
+                sResult.push_back(sImage);
+            }
+            else
+            {
+                Image sImage24 = sImage.Resize24();
+                sResult.push_back(sImage24);
+            }
 		}		
 	}
     
@@ -242,7 +253,6 @@ double Image::Diff(Image &img)
 		}
 		else
 		{
-			Image result(iWidth_,iHeight_);
 			for (int i = 0; i < iWidth_; i ++)
 				for (int j = 0; j < iHeight_; j ++)
 					for (int c = 0; c < 3; c ++)
@@ -292,7 +302,7 @@ Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::
 	Image result ((int)elements[0].size() * 24, (int)elements.size() * 24);
 	Image square(24,24);
 
-	for(unsigned int x = 0; x < elements[0].size(); x ++)
+	for(unsigned int x = 0; x < elements.size(); x ++)
 		for(unsigned int y = 0; y < elements[0].size(); y ++)
 		{
 			square = elements[x][y].ChooseImage(cFolderName);
@@ -308,10 +318,11 @@ Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::
 
 Image Image::mergeImage(std::vector<std::vector<Image> > & elements, std::vector<Image> & sLibrary)
 {
-	Image result ((int)elements[0].size() * 24, (int)elements.size() * 24);
+    int iSizex = (int)elements.size() * 24, iSizey = (int)elements[0].size() * 24;
+	Image result (iSizex, iSizey);
 	Image square(24,24);
     
-	for(unsigned int x = 0; x < elements[0].size(); x ++)
+	for(unsigned int x = 0; x < elements.size(); x ++)
 		for(unsigned int y = 0; y < elements[0].size(); y ++)
 		{
 			square = elements[x][y].ChooseImage(sLibrary);
