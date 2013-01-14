@@ -49,7 +49,7 @@ void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfold
 	while ((dirp = readdir(dp)) != NULL) 
 	{
 		std::string s(dirp->d_name);
-		if(s.length() > 4)
+		if(s.length() > 4 && strcmp(".DS_Store", s.c_str()))
 		{
 			std::cout << inputfolder + s << "... ";
 			std::cout.flush();
