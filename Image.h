@@ -4,6 +4,8 @@
 #include <iostream>
 #include <cstdio>
 #include <vector>
+#include <string>
+#include <algorithm>
 //#include <tr1/memory>
 
 //class VectorImage;
