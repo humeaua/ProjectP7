@@ -191,6 +191,11 @@ unsigned char & Image::operator()(int x, int y, int i)
 	return cData_[y*3*iWidth_ + x*3 + i];
 }
 
+const unsigned char & Image::operator()(int x, int y, int i) const
+{
+	return cData_[y*3*iWidth_ + x*3 + i];
+}
+
 std::vector<std::vector<Image> > Image::cutImage()
 {
     Image element(24,24);
@@ -274,6 +279,33 @@ double Image::Diff(Image &img)
 	return MSE;
 }
 
+double Image::Diff(const Image &img) const
+{
+    double MSE = 0;
+    
+	try
+	{
+		if (img.iWidth_ != iWidth_ || img.iHeight_ != iHeight_)
+		{
+			char err=1;
+			throw(err);
+		}
+		else
+		{
+			for (int i = 0; i < iWidth_; i ++)
+				for (int j = 0; j < iHeight_; j ++)
+					for (int c = 0; c < 3; c ++)
+						MSE += ((*this)(i,j,c) - img(i,j,c)) * ((*this)(i,j,c) - img(i,j,c));
+		}
+	}
+	catch(char err)
+	{
+		std::cout<<"Error, images don't have the same size"<<std::endl;
+	}
+    
+	return MSE;
+}
+
 Image Image::ChooseImage(const std::string &cFolderName)
 {
     std::vector<Image> sLibrary = GetFromFolder(cFolderName);
@@ -283,6 +315,30 @@ Image Image::ChooseImage(const std::string &cFolderName)
 Image Image::ChooseImage(std::vector<Image> &sLibrary)
 {
     std::vector<Image>::iterator iter = sLibrary.begin();
+    Image sResultImage = *sLibrary.begin();
+    double dDiff = Diff(sResultImage);
+    iter++;
+    while (iter != sLibrary.end()) 
+    {
+        double dDiffNew = Diff(*iter);
+        if (dDiffNew < dDiff)
+        {
+            dDiff = dDiffNew;
+            sResultImage = *iter;
+        }
+        //  Stopping condition : in case of the image is already a mosaic
+        if (dDiffNew < 1)
+        {
+            break;
+        }
+        iter++;
+    }
+    return sResultImage;
+}
+
+Image Image::ChooseImage(const std::vector<Image> &sLibrary) const
+{
+    std::vector<Image>::const_iterator iter = sLibrary.begin();
     Image sResultImage = *sLibrary.begin();
     double dDiff = Diff(sResultImage);
     iter++;

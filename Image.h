@@ -39,10 +39,15 @@ public:
     static void GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary);
     
     virtual double Diff(Image & sImage);
+    virtual double Diff(const Image & sImage) const;
+    
     virtual Image ChooseImage(std::vector<Image> & sLibrary);
+    virtual Image ChooseImage(const std::vector<Image> & sLibrary) const;
+    
     virtual Image ChooseImage(const std::string & cFolderName);
     virtual std::vector<std::vector<Image> > cutImage();
     Image mergeImage(std::vector<std::vector<Image> >&, const std::string&);
+    
     Image mergeImage(std::vector<std::vector<Image> >&, std::vector<Image> & sLibrary);
     char Mean(unsigned char*, int, int);
     Image Resize24();
@@ -58,6 +63,7 @@ public:
 	virtual void flipHorizontally();
     //virtual void CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage);
     unsigned char & operator()(int x, int y, int i);
+    const unsigned char & operator()(int x, int y, int i) const;
     //vector<vector<Image> > cutImage();
     //double diff(Image&);
 };
