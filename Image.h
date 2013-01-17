@@ -34,18 +34,18 @@ public:
     static std::vector<Image> GetFromFolder(const std::string & cFoldername);
     static void GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary);
     
-    virtual double Diff(Image & sImage);
+    //virtual double Diff(Image & sImage);
     virtual double Diff(const Image & sImage) const;
     
-    virtual Image ChooseImage(std::vector<Image> & sLibrary) const;
+    //virtual Image ChooseImage(std::vector<Image> & sLibrary) const;
     virtual Image ChooseImage(const std::vector<Image> & sLibrary) const;
     virtual Image ChooseImage(const std::string & cFolderName) const;
     
     virtual std::vector<std::vector<Image> > cutImage();
     
-    Image mergeImage(std::vector<std::vector<Image> >& elements, const std::string& cFolderName);
+    //Image mergeImage(std::vector<std::vector<Image> >& elements, const std::string& cFolderName);
     Image mergeImage(const std::vector<std::vector<Image> >& elements, const std::string& cFolderName);
-    Image mergeImage(std::vector<std::vector<Image> >& elements, std::vector<Image> & sLibrary);
+    //Image mergeImage(std::vector<std::vector<Image> >& elements, std::vector<Image> & sLibrary);
     Image mergeImage(const std::vector<std::vector<Image> >& elements, std::vector<Image> & sLibrary);
     
     Image Resize24();

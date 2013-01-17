@@ -234,7 +234,7 @@ void Image::GetFromFolder(const std::string & cFoldername, std::vector<Image> & 
     cLibrary = GetFromFolder(cFoldername);
 }
 
-double Image::Diff(Image &img)
+/*double Image::Diff(Image &img)
 {
     double MSE = 0;
     
@@ -266,7 +266,7 @@ double Image::Diff(Image &img)
 	}
     
 	return MSE;
-}
+}*/
 
 double Image::Diff(const Image &img) const
 {
@@ -308,7 +308,7 @@ Image Image::ChooseImage(const std::string &cFolderName) const
     return ChooseImage(sLibrary);
 }
 
-Image Image::ChooseImage(std::vector<Image> &sLibrary) const
+/*Image Image::ChooseImage(std::vector<Image> &sLibrary) const
 {
     std::vector<Image>::iterator iter = sLibrary.begin();
     Image sResultImage = *sLibrary.begin();
@@ -330,7 +330,7 @@ Image Image::ChooseImage(std::vector<Image> &sLibrary) const
         iter++;
     }
     return sResultImage;
-}
+}*/
 
 Image Image::ChooseImage(const std::vector<Image> &sLibrary) const
 {
@@ -356,7 +356,7 @@ Image Image::ChooseImage(const std::vector<Image> &sLibrary) const
     return sResultImage;
 }
 
-Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::string &cFolderName)
+/*Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::string &cFolderName)
 {
 	Image result ((int)elements[0].size() * 24, (int)elements.size() * 24);
 	Image square(24,24);
@@ -373,7 +373,7 @@ Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::
 					}
 		}
 	return result;
-}
+}*/
 
 Image Image::mergeImage(const std::vector<std::vector<Image> > & elements, const std::string &cFolderName)
 {
@@ -414,7 +414,7 @@ Image Image::mergeImage(const std::vector<std::vector<Image> > & elements, std::
 	return result;
 }
 
-Image Image::mergeImage(std::vector<std::vector<Image> > & elements, std::vector<Image> & sLibrary)
+/*Image Image::mergeImage(std::vector<std::vector<Image> > & elements, std::vector<Image> & sLibrary)
 {
     int iSizex = (int)elements.size() * 24, iSizey = (int)elements[0].size() * 24;
 	Image result (iSizex, iSizey);
@@ -432,7 +432,7 @@ Image Image::mergeImage(std::vector<std::vector<Image> > & elements, std::vector
 					}
 		}
 	return result;
-}
+}*/
 
 void Image::flipHorizontally()
 {
