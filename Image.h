@@ -6,9 +6,6 @@
 #include <vector>
 #include <string>
 #include <algorithm>
-//#include <tr1/memory>
-
-//class VectorImage;
 
 unsigned char myMean(std::vector<unsigned char> & cVect);
 unsigned char myMean2(std::vector<unsigned char> & cVect);
@@ -16,8 +13,7 @@ unsigned char myMean2(std::vector<unsigned char> & cVect);
 class Image
 {
 private:
-	//unsigned char*	cData_;
-    std::vector<unsigned char> cData_;
+	std::vector<unsigned char> cData_;
 	int	iWidth_;
 	int	iHeight_;
 
@@ -41,56 +37,25 @@ public:
     virtual double Diff(Image & sImage);
     virtual double Diff(const Image & sImage) const;
     
-    virtual Image ChooseImage(std::vector<Image> & sLibrary);
+    virtual Image ChooseImage(std::vector<Image> & sLibrary) const;
     virtual Image ChooseImage(const std::vector<Image> & sLibrary) const;
+    virtual Image ChooseImage(const std::string & cFolderName) const;
     
-    virtual Image ChooseImage(const std::string & cFolderName);
     virtual std::vector<std::vector<Image> > cutImage();
-    Image mergeImage(std::vector<std::vector<Image> >&, const std::string&);
     
-    Image mergeImage(std::vector<std::vector<Image> >&, std::vector<Image> & sLibrary);
-    char Mean(unsigned char*, int, int);
+    Image mergeImage(std::vector<std::vector<Image> >& elements, const std::string& cFolderName);
+    Image mergeImage(const std::vector<std::vector<Image> >& elements, const std::string& cFolderName);
+    Image mergeImage(std::vector<std::vector<Image> >& elements, std::vector<Image> & sLibrary);
+    Image mergeImage(const std::vector<std::vector<Image> >& elements, std::vector<Image> & sLibrary);
+    
     Image Resize24();
-    //Image Resize();
     
 	virtual void save(const std::string & filename);
     
-    //  return an image with the mean colors of (*this)
-    //virtual void MeanColors(char * cResult); 
-    
-    //virtual Image Resize(const int& iNewWidth);
-
 	virtual void flipHorizontally();
-    //virtual void CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage);
+    
     unsigned char & operator()(int x, int y, int i);
     const unsigned char & operator()(int x, int y, int i) const;
-    //vector<vector<Image> > cutImage();
-    //double diff(Image&);
 };
-
-/*class VectorImage
-{
-    // In CPP, you have to create a DYNAMIC array of DYNAMIC objects.
-    // Otherwise, TA will deduct 35 points.
-private:
-    std::size_t iCapacity_; //capacity of the current array
-    std::size_t iSize_;     // number of current records
-    Image* sList_;
-    //std::tr1::shared_ptr<Image> sList_;
-    
-public:
-    VectorImage();
-    VectorImage(std::size_t iCapacity);
-    virtual ~VectorImage();
-    //virtual void Alloc();
-    virtual std::size_t getCapacity();
-    std::size_t getSize();
-    Image& get(std::size_t index);
-    void print();
-    void add(Image & newImage); 
-    int remove(int productID);
-    
-    Image & operator()(std::size_t iIndex);
-};*/
 
 #endif

@@ -4,24 +4,6 @@
 #include <cstdlib>
 #include <dirent.h>
 
-unsigned char myMean(std::vector<unsigned char> & cVect)
-{
-    std::vector<unsigned char>::iterator itermin = std::min_element(cVect.begin(), cVect.end()), itermax = std::max_element(cVect.begin(), cVect.end());
-    unsigned char cMin = *itermin, cMax = *itermax;
-    while (cMin + 1 != cMax && cMin != cMax)
-    {
-        *itermin += 1;
-        *itermax -= 1;
-        
-        itermin = std::min_element(cVect.begin(), cVect.end());
-        itermax = std::max_element(cVect.begin(), cVect.end());
-        
-        cMax = *itermax;
-        cMin = *itermin;
-    }
-    return cMax;
-}
-
 unsigned char myMean2(std::vector<unsigned char> & cVect)
 {
     long long lResult = 0;
@@ -266,9 +248,16 @@ double Image::Diff(Image &img)
 		else
 		{
 			for (int i = 0; i < iWidth_; i ++)
+            {
 				for (int j = 0; j < iHeight_; j ++)
+                {
 					for (int c = 0; c < 3; c ++)
-						MSE += ((*this)(i,j,c) - img(i,j,c)) * ((*this)(i,j,c) - img(i,j,c));
+                    {
+                        unsigned char cPixelthis = (*this)(i,j,c), cPixelImg = img(i,j,c);
+						MSE += (cPixelthis - cPixelImg) * (cPixelthis - cPixelImg);
+                    }
+                }
+            }
 		}
 	}
 	catch(char err)
@@ -293,9 +282,16 @@ double Image::Diff(const Image &img) const
 		else
 		{
 			for (int i = 0; i < iWidth_; i ++)
+            {
 				for (int j = 0; j < iHeight_; j ++)
+                {
 					for (int c = 0; c < 3; c ++)
-						MSE += ((*this)(i,j,c) - img(i,j,c)) * ((*this)(i,j,c) - img(i,j,c));
+                    {
+                        unsigned char cPixelthis = (*this)(i,j,c), cPixelImg = img(i,j,c);
+						MSE += (cPixelthis - cPixelImg) * (cPixelthis - cPixelImg);
+                    }
+                }
+            }
 		}
 	}
 	catch(char err)
@@ -306,13 +302,13 @@ double Image::Diff(const Image &img) const
 	return MSE;
 }
 
-Image Image::ChooseImage(const std::string &cFolderName)
+Image Image::ChooseImage(const std::string &cFolderName) const
 {
     std::vector<Image> sLibrary = GetFromFolder(cFolderName);
     return ChooseImage(sLibrary);
 }
 
-Image Image::ChooseImage(std::vector<Image> &sLibrary)
+Image Image::ChooseImage(std::vector<Image> &sLibrary) const
 {
     std::vector<Image>::iterator iter = sLibrary.begin();
     Image sResultImage = *sLibrary.begin();
@@ -379,6 +375,45 @@ Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::
 	return result;
 }
 
+Image Image::mergeImage(const std::vector<std::vector<Image> > & elements, const std::string &cFolderName)
+{
+	Image result ((int)elements[0].size() * 24, (int)elements.size() * 24);
+	Image square(24,24);
+    
+	for(unsigned int x = 0; x < elements.size(); x ++)
+		for(unsigned int y = 0; y < elements[0].size(); y ++)
+		{
+			square = elements[x][y].ChooseImage(cFolderName);
+			for(int a = 0; a < 24; a ++)
+				for(int b = 0; b < 24; b ++)
+					for(int c = 0; c < 3; c++)
+					{
+						result(24 * x + a, 24 * y + b, c) = square(a,b,c);
+					}
+		}
+	return result;
+}
+
+Image Image::mergeImage(const std::vector<std::vector<Image> > & elements, std::vector<Image> & sLibrary)
+{
+    int iSizex = (int)elements.size() * 24, iSizey = (int)elements[0].size() * 24;
+	Image result (iSizex, iSizey);
+	Image square(24,24);
+    
+	for(unsigned int x = 0; x < elements.size(); x ++)
+		for(unsigned int y = 0; y < elements[0].size(); y ++)
+		{
+			square = elements[x][y].ChooseImage(sLibrary);
+			for(int a = 0; a < 24; a ++)
+				for(int b = 0; b < 24; b ++)
+					for(int c = 0; c < 3; c++)
+					{
+						result(24 * x + a, 24 * y + b, c) = square(a,b,c);
+					}
+		}
+	return result;
+}
+
 Image Image::mergeImage(std::vector<std::vector<Image> > & elements, std::vector<Image> & sLibrary)
 {
     int iSizex = (int)elements.size() * 24, iSizey = (int)elements[0].size() * 24;
@@ -415,53 +450,6 @@ void Image::flipHorizontally()
     }
 }
 
-char Image::Mean(unsigned char* cColors, int iSize, int iStep)
-{
-	unsigned char min = *cColors;
-	int minindex = 0;
-	unsigned char max = *cColors;
-	int maxindex = 0;
-
-	do
-	{
-		for(int i = 0; i < iSize; i+=iStep)
-		{
-			if (min > *(cColors + i))
-			{
-				min = *(cColors + i);
-				minindex = i;
-			}
-			if (max < *(cColors + i))
-			{
-				max = *(cColors + i);
-				maxindex = i;
-			};
-		}
-		*(cColors + minindex)+=1;
-		*(cColors + maxindex)-=1;
-
-	} while (max > min + 1);
-	return *(cColors);
-}
-
-/*Image Image::Resize24()
-{
-	Image result(24,24);
-
-	for(int y = 0; y < iHeight_; y ++)
-		for(int x = 0; x < 24; x ++)
-			for(int a = 0; a < iWidth_ / 24; a ++)
-				for(int c = 0; c < 3; c++)
-					//(*this)(x * (iWidth_ / 24) + a, y, c) = Mean(cData_ + ((iWidth_ / 24) * x), 24, 3);
-
-	for(int y = 0; y < 24; y ++)
-		for(int x = 0; x < 24; x ++)
-			for(int c = 0; c < 3; c++)
-				//result(x, y, c) = Mean(cData_ + ((iWidth_ / 24) * x) + iWidth_ * ((iHeight_ / 24) * y), 24, iWidth_);
-
-	return result;
-}*/
-
 //  Function to resize an image of size iWidth * iHeight into a 24 * 24 one
 Image Image::Resize24()
 {
@@ -480,248 +468,3 @@ Image Image::Resize24()
             }
     return sResult;
 }
-
-/*std::vector<std::vector<Image> > Image::cutImage()
-{
-	Image element(24,24);
-    std::vector<Image> lign(width / 24, element);
-    std::vector<std::vector<Image> > result(height / 24, lign);
-
-	for(int y = 0; y < width / 24; y ++)
-		for(int x = 0; x < height / 24; x ++)
-			for(int a = 0; a < 24; a ++)
-				for(int b = 0; b < 24; b ++)
-					for(int c = 0; c < 3; c++)
-					{
-						result[x][y](a,b, c)=(*this)(24 * x + a, 24 * y + b, c);
-					}
-
-	return result;
-}
-
-double Image::diff(Image &img)
-{
-	double MSE = 0;
-
-	try
-	{
-		if (img.width != width || img.height != height)
-		{
-			char err=1;
-			throw(err);
-		}
-		else
-		{
-			Image result(width,height);
-			for (int i = 0; i < width; i ++)
-				for (int j = 0; j < height; j ++)
-					for (int c = 0; c < 3; c ++)
-						MSE += ((*this)(i,j,c) - img(i,j,c)) * ((*this)(i,j,c) - img(i,j,c));
-		}
-	}
-	catch(char err)
-	{
-		cout<<"Error, images don't have the same size"<<endl;
-	}
-
-	return MSE;
-}
-
-void Image::CutImage(const int iHowMuchCuts, VectorImage & sListOfNewImage)
-{
-    //  Let us test if iHowMuchCuts is a square
-    double dSqrtCuts = sqrt(iHowMuchCuts);
-    if (dSqrtCuts - (int)floor(dSqrtCuts) != 0)
-    {
-        std::cout << "Number of cuts is not a square" << std::endl;
-        std::cout << "Not yet implemented" << std::endl;
-    }
-    else
-    {
-        int iCut = dSqrtCuts;
-        int iNewHeight = iHeight_ / iCut, iNewWidth = iWidth_ / iCut;
-        
-        for (int i = 0 ; i < iCut ; ++i)
-        {
-            for (int j = 0 ; j < iCut ; ++j)
-            {
-                Image * pImage = new Image(iNewWidth, iNewHeight);
-                
-                for (int iPixel = 0 ; iPixel < iNewHeight ; ++iPixel)
-                {
-                    for (int jPixel = 0 ; jPixel < iNewWidth ; ++jPixel)
-                    {
-                        for (int c = 0 ; c < 3 ; ++c)
-                        {
-                            (*pImage)(jPixel, iPixel, c) = (*this)(jPixel + j * iNewWidth,iPixel + i * iNewHeight, c);
-                        }
-                    }
-                }
-                sListOfNewImage.add(*pImage);
-                //  Free memory
-                delete pImage;
-            }
-        }
-    }
-}
-
-void Image::MeanColors(char* cResult)
-{
-    Image sResult(1,1);
-    long lResult[3] = {0, 0, 0};
-    for (int iPixel = 0 ; iPixel < iWidth_ ; ++iPixel)
-    {
-        for (int jPixel = 0 ; jPixel < iHeight_ ; ++jPixel)
-        {
-            for (int c = 0 ; c < 3 ; ++c)
-            {
-                lResult[c] += (*this)(iPixel, jPixel, c);
-            }
-        }
-    }
-    for (int c = 0 ; c < 3 ; ++c)
-    {
-        lResult[c] /= (iWidth_ * iHeight_);
-    }
-    for (int c = 0 ; c < 3 ; ++c)
-    {
-        cResult[c] = (char)lResult[c];
-    }
-}
-
-Image Image::Resize(const int& iNewWidth)
-{
-    if (iNewWidth > (*this).iWidth_)
-    {
-        std::cout << "Not yet implemented" << std::endl;
-        throw std::runtime_error::runtime_error("Height and Width have to be below Width and Height for now");
-    }
-    else if ((*this).iWidth_ % iNewWidth != 0)
-    {
-        std::cout << "Not yet implemented" << std::endl;
-        throw std::runtime_error::runtime_error("New Width and New Height of image have to be divisors of Height and Width");
-    }
-    else
-    {
-        int iCut = iWidth_ / iNewWidth, iNbCuts = iCut * iCut;
-        Image sResultImage(iNewWidth, iHeight_ / iCut);
-        
-        //  only case implemented for now
-        VectorImage sListOfImage(iNbCuts), sListOfImage2(iNbCuts);
-        this->CutImage(iNbCuts, sListOfImage);
-        for (int i = 0 ; i < iNbCuts ; ++i)
-        {
-            Image sImage = sListOfImage(i);
-            char cResult[3];
-            sImage.MeanColors(cResult); // cResult is an array of size 3
-            int iRemainder = i % iCut, iQuotient = i % iCut;
-            
-            for (int c = 0 ; c < 3 ; ++c)
-            {
-                sResultImage(iQuotient, iRemainder, c) = cResult[c];
-            }
-            
-            //delete cResult;
-        }
-        return sResultImage;
-    }
-    Image sImage;
-    return sImage;
-}
-
-VectorImage::VectorImage() : iCapacity_(1), iSize_(1)
-{}
-
-VectorImage::VectorImage(std::size_t iCapacity) : iCapacity_(iCapacity), iSize_(0)
-{}
-
-VectorImage::~VectorImage()
-{
-    if (sList_)
-    {
-        for( std::size_t iSize = 0 ; iSize < iSize_ ; ++iSize)
-        {
-            sList_[iSize].Free();
-        }
-    }
-}
-
-std::size_t VectorImage::getCapacity()
-{
-    return iCapacity_;
-}
-
-std::size_t VectorImage::getSize()
-{
-    return iSize_;
-}
-
-Image& VectorImage::get(std::size_t iIndex)
-{
-    if (iIndex <  iSize_)
-    {
-        return sList_[iIndex];
-    }
-    else
-    {
-        throw std::runtime_error::runtime_error("Cannot access to the desired element");
-    }
-}
-
-void VectorImage::add(Image & newImage)
-{
-    if (iSize_ < iCapacity_)
-    {
-        Image* sTmpList = new Image[iSize_ + 1];
-        for (int i = 0 ; i < iSize_ ; i++)
-        {
-            sTmpList[i] = sList_[i];
-        }
-        sList_ = sTmpList;
-        sList_[iSize_] = newImage;
-    }
-    else
-    {
-        iCapacity_ *= 2;
-        Image* tmpList = new Image[iCapacity_];
-        for (int i = 0 ; i < iSize_ ; ++i)
-        {
-            tmpList[i] = sList_[i];
-        }
-        tmpList[iSize_] = newImage;
-        sList_ = tmpList;
-    }
-    iSize_++;
-}
-
-int VectorImage::remove(int iElmt)
-{
-    if (iElmt > iSize_ - 1)
-    {
-        throw std::runtime_error::runtime_error("Try to delete a non-existing element");
-    }
-    
-    for(int i=iElmt; i<iSize_-1; i++)
-    {
-        sList_[i] = sList_[i+1];
-    }
-    iSize_--;
-    // SHRINK
-    if( iSize_*2 == iCapacity_ )
-    {
-        iCapacity_ = iCapacity_/2;
-        Image* tmpList = new Image[iCapacity_];
-        for(int i=0; i<iSize_; i++)
-        {
-            tmpList[i] =  sList_[i];
-        }
-        sList_ = tmpList;
-        iSize_ = iCapacity_;
-    }
-    return 0;
-}
-
-Image & VectorImage::operator()(std::size_t iIndex)
-{
-    return get(iIndex);
-}*/
