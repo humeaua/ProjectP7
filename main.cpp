@@ -13,18 +13,16 @@ void mosaiqueAllImagesInFolder(std::string&, std::string&, std::vector<Image> &)
 int main(int argc, char *argv[])
 {
 	clock_t start = clock();
-    std::string cLibraryInputName = "/Users/alexhum49/Documents/Workspace/ProjectP7/LibraryinputImages/",
-                cInputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/",
-                cOutputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/";
+    std::string cLibraryInputName, cInputFolderName, cOutputFolderName;
     
-    /*std::cout << "Enter the Library folder name  :" << std::endl;
+    std::cout << "Enter the Library folder name  :" << std::endl;
     std::cin >> cLibraryInputName;
     
     std::cout << "Enter the Input Image folder name : " << std::endl;
     std::cin >> cInputFolderName;
     
     std::cout << "Enter the Output Image folder name : " << std::endl;
-    std::cin >> cOutputFolderName;*/
+    std::cin >> cOutputFolderName;
     
     std::vector<Image> sLibrary;
     std::cout << "Loading Library" << std::endl;
@@ -35,7 +33,7 @@ int main(int argc, char *argv[])
     mosaiqueAllImagesInFolder(cInputFolderName, cOutputFolderName, sLibrary);
     std::cout << "Total time elapsed : " << (double)(clock() - start) / CLOCKS_PER_SEC << " seconds." << std::endl;
     sLibrary.clear();
-	return 0;
+    return 0;
 }
 
 void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder)
