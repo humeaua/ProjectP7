@@ -66,17 +66,6 @@ int Image::getHeight()
 	return iHeight_;
 }
 
-//  Methods to set elements of the class without construcing it
-void Image::setHeight(const int iHeight)
-{
-    iHeight_ = iHeight;
-}
-
-void Image::setWidth(const int iWidth)
-{
-    iWidth_ = iWidth;
-}
-
 //  Method to load a an image from its name
 void Image::load(const std::string & cFilename)
 {
