@@ -50,11 +50,6 @@ Image::~Image()
 	cData_.clear();
 }
 
-void Image::Free()
-{
-    cData_.clear();
-}
-
 //  Methods to get the elements of the class
 int Image::getWidth()
 {
