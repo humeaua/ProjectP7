@@ -33,8 +33,6 @@ public:
 	virtual int getWidth();
 	virtual int getHeight();
     
-    virtual void Free();
-    
     //  Methods to load a library (two signatures depending on what we want to use)
     static std::vector<Image> GetFromFolder(const std::string & cFoldername);
     static void GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary);
