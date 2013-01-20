@@ -6,7 +6,38 @@
 #include <cmath>
 #include <time.h>
 
-void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder);
+void rotateAllImagesInFolder(const std::string&, const std::string&);
+void mosaiqueAllImagesInFolder(std::string&, std::string&, std::string&);
+void mosaiqueAllImagesInFolder(std::string&, std::string&, std::vector<Image> &);
+
+int main(int argc, char *argv[])
+{
+	clock_t start = clock();
+    std::string cLibraryInputName = "/Users/alexhum49/Documents/Workspace/ProjectP7/LibraryinputImages/",
+                cInputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/",
+                cOutputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/";
+    
+    /*std::cout << "Enter the Library folder name  :" << std::endl;
+    std::cin >> cLibraryInputName;
+    
+    std::cout << "Enter the Input Image folder name : " << std::endl;
+    std::cin >> cInputFolderName;
+    
+    std::cout << "Enter the Output Image folder name : " << std::endl;
+    std::cin >> cOutputFolderName;*/
+    
+    std::vector<Image> sLibrary;
+    std::cout << "Loading Library" << std::endl;
+    Image::GetFromFolder(cLibraryInputName, sLibrary);
+    std::cout << "End of Loading Library" << std::endl;
+    std::cout << "Time elapsed : " << (double)(clock() - start) / CLOCKS_PER_SEC << " seconds." << std::endl;
+    
+    mosaiqueAllImagesInFolder(cInputFolderName, cOutputFolderName, sLibrary);
+    std::cout << "Total time elapsed : " << (double)(clock() - start) / CLOCKS_PER_SEC << " seconds." << std::endl;
+    sLibrary.clear();
+	return 0;
+}
+
 void rotateAllImagesInFolder(const std::string & inputfolder, const std::string & outputfolder)
 {
 	DIR *dp;
@@ -35,7 +66,6 @@ void rotateAllImagesInFolder(const std::string & inputfolder, const std::string 
 	closedir(dp);
 }
 
-void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfolder, std::string& libraryfolder);
 void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfolder, std::string& libraryfolder)
 {
 	DIR *dp;
@@ -66,7 +96,6 @@ void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfold
 
 }
 
-void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfolder, std::vector<Image> & sLibrary);
 void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfolder, std::vector<Image> & sLibrary)
 {
 	DIR *dp;
@@ -95,33 +124,4 @@ void mosaiqueAllImagesInFolder(std::string& inputfolder, std::string& outputfold
     
 	closedir(dp);
     
-}
-
-
-int main(int argc, char *argv[])
-{
-	clock_t start = clock();
-    std::string cLibraryInputName = "/Users/alexhum49/Documents/Workspace/ProjectP7/LibraryinputImages/",
-                cInputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/inputImages/",
-                cOutputFolderName = "/Users/alexhum49/Documents/Workspace/ProjectP7/outputImages/";
-    
-    /*std::cout << "Enter the Library folder name  :" << std::endl;
-    std::cin >> cLibraryInputName;
-    
-    std::cout << "Enter the Input Image folder name : " << std::endl;
-    std::cin >> cInputFolderName;
-    
-    std::cout << "Enter the Output Image folder name : " << std::endl;
-    std::cin >> cOutputFolderName;*/
-    
-    std::vector<Image> sLibrary;
-    std::cout << "Loading Library" << std::endl;
-    Image::GetFromFolder(cLibraryInputName, sLibrary);
-    std::cout << "End of Loading Library" << std::endl;
-    std::cout << "Time elapsed : " << (double)(clock() - start) / CLOCKS_PER_SEC << " seconds." << std::endl;
-    
-    mosaiqueAllImagesInFolder(cInputFolderName, cOutputFolderName, sLibrary);
-    std::cout << "Total time elapsed : " << (double)(clock() - start) / CLOCKS_PER_SEC << " seconds." << std::endl;
-    sLibrary.clear();
-	return 0;
 }
