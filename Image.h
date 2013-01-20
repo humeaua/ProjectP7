@@ -35,10 +35,6 @@ public:
     
     virtual void Free();
     
-    //  Methods to set elements of the class without construcing it
-    virtual void setWidth(const int iWidth);
-    virtual void setHeight(const int iHeight);
-    
     //  Methods to load a library (two signatures depending on what we want to use)
     static std::vector<Image> GetFromFolder(const std::string & cFoldername);
     static void GetFromFolder(const std::string & cFoldername, std::vector<Image> & cLibrary);
