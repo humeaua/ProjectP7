@@ -4,10 +4,11 @@
 #include <cstdlib>
 #include <dirent.h>
 
-unsigned char myMean2(std::vector<unsigned char> & cVect)
+//  Function to compute the mean of an unsigned char vector
+unsigned char myMean(std::vector<unsigned char> & cVect)
 {
     long long lResult = 0;
-    for (std::vector<unsigned char>::iterator it = cVect.begin() ; it != cVect.end() ; ++it)
+    for (std::vector<unsigned char>::const_iterator it = cVect.begin() ; it != cVect.end() ; ++it)
     {
         lResult += *it;
     }
@@ -15,6 +16,7 @@ unsigned char myMean2(std::vector<unsigned char> & cVect)
     return (char)lResult;
 }
 
+//  Constructors of Image
 Image::Image() : iWidth_(0), iHeight_(0)
 {}
 
@@ -22,8 +24,7 @@ Image::Image(int width, int height)
 {
 	this->iWidth_ = width;
 	this->iHeight_ = height;
-	//cData_ = new unsigned char[3 * iWidth_ * iHeight_];
-    cData_.reserve(3 * iWidth_ * iHeight_);
+	cData_.reserve(3 * iWidth_ * iHeight_);
     cData_.resize(3 * iWidth_ * iHeight_);
 	for(int i=0; i < 3*width*height; i ++)
     {
@@ -36,22 +37,17 @@ Image::Image(const std::string& cFilename)
 	load(cFilename);
 }
 
-Image::~Image()
-{
-	//delete cData_;
-    cData_.clear();
-}
-
 Image::Image(const Image &img)
 {
 	this->iWidth_ = img.iWidth_;
 	this->iHeight_ = img.iHeight_;
-	//this->cData_ = new unsigned char[3*iWidth_*iHeight_];
-    this->cData_ = img.cData_;
-	//for(int i=0; i < 3*iWidth_*iHeight_; i ++)
-    //{
-	//	this->cData_[i] = img.cData_[i];
-    //}
+	this->cData_ = img.cData_;
+}
+
+//  Destructor of Image
+Image::~Image()
+{
+	cData_.clear();
 }
 
 void Image::Free()
@@ -59,6 +55,7 @@ void Image::Free()
     cData_.clear();
 }
 
+//  Methods to get the elements of the class
 int Image::getWidth()
 {
 	return iWidth_;
@@ -69,6 +66,7 @@ int Image::getHeight()
 	return iHeight_;
 }
 
+//  Methods to set elements of the class without construcing it
 void Image::setHeight(const int iHeight)
 {
     iHeight_ = iHeight;
@@ -79,6 +77,7 @@ void Image::setWidth(const int iWidth)
     iWidth_ = iWidth;
 }
 
+//  Method to load a an image from its name
 void Image::load(const std::string & cFilename)
 {
 	FILE *infile;
@@ -101,16 +100,9 @@ void Image::load(const std::string & cFilename)
 	iWidth_ = cinfo.image_width;
 	iHeight_ = cinfo.image_height;
 
-	//cData_ = new unsigned char[3*iWidth_*iHeight_];
-    cData_.resize(3 * iWidth_ * iHeight_);
+	cData_.resize(3 * iWidth_ * iHeight_);
 
-	//if(cData_ == NULL)
-	//{
-    //    std::cout << "Error in Memory allocation. " << std::endl;
-	//	exit(EXIT_FAILURE);
-	//}
-
-	jpeg_start_decompress(&cinfo);
+    jpeg_start_decompress(&cinfo);
 
     buffer = (*cinfo.mem->alloc_sarray) ((j_common_ptr) &cinfo, JPOOL_IMAGE, iWidth_*3, 1);
 
@@ -130,6 +122,7 @@ void Image::load(const std::string & cFilename)
 	fclose(infile);
 }
 
+//  Method to save an image in a file
 void Image::save(const std::string& cFilename)
 {
 	FILE *outfile;
@@ -142,7 +135,6 @@ void Image::save(const std::string& cFilename)
         std::cout << "Can't open " << cFilename << " for saving image." << std::endl;
 		exit(EXIT_FAILURE);
     }
-
  
 	cinfo.err = jpeg_std_error(&jerr);
 	jpeg_create_compress(&cinfo);
@@ -156,7 +148,6 @@ void Image::save(const std::string& cFilename)
 	jpeg_set_defaults(&cinfo);
 	jpeg_set_quality (&cinfo, 96, true);	  /*set the quality [0..100]  */
 	jpeg_start_compress(&cinfo, true);
-
   
 	while (cinfo.next_scanline < cinfo.image_height) 
 	{
@@ -168,6 +159,7 @@ void Image::save(const std::string& cFilename)
 	fclose(outfile);
 }
 
+//  Operator to access data member in const and non-const version
 unsigned char & Image::operator()(int x, int y, int i)
 {
 	return cData_[y*3*iWidth_ + x*3 + i];
@@ -178,6 +170,7 @@ const unsigned char & Image::operator()(int x, int y, int i) const
 	return cData_[y*3*iWidth_ + x*3 + i];
 }
 
+//  Method to cut an Image
 std::vector<std::vector<Image> > Image::cutImage()
 {
     Image element(24,24);
@@ -196,6 +189,7 @@ std::vector<std::vector<Image> > Image::cutImage()
     return result;
 }
 
+//  Method to get images in a folder
 std::vector<Image> Image::GetFromFolder(const std::string & cFoldername)
 {
     std::vector<Image> sResult;
@@ -210,6 +204,7 @@ std::vector<Image> Image::GetFromFolder(const std::string & cFoldername)
 	while ((dirp = readdir(dp)) != NULL) 
 	{
         std::string s(dirp->d_name);
+        //  Need to compare to .DS_Store because else we get an error (it is a hidden file in the folder)
 		if(s.length() > 4 && strcmp(".DS_Store", s.c_str()))
 		{
             Image sImage(cFoldername + s);
@@ -234,40 +229,7 @@ void Image::GetFromFolder(const std::string & cFoldername, std::vector<Image> & 
     cLibrary = GetFromFolder(cFoldername);
 }
 
-/*double Image::Diff(Image &img)
-{
-    double MSE = 0;
-    
-	try
-	{
-		if (img.iWidth_ != iWidth_ || img.iHeight_ != iHeight_)
-		{
-			char err=1;
-			throw(err);
-		}
-		else
-		{
-			for (int i = 0; i < iWidth_; i ++)
-            {
-				for (int j = 0; j < iHeight_; j ++)
-                {
-					for (int c = 0; c < 3; c ++)
-                    {
-                        unsigned char cPixelthis = (*this)(i,j,c), cPixelImg = img(i,j,c);
-						MSE += (cPixelthis - cPixelImg) * (cPixelthis - cPixelImg);
-                    }
-                }
-            }
-		}
-	}
-	catch(char err)
-	{
-		std::cout<<"Error, images don't have the same size"<<std::endl;
-	}
-    
-	return MSE;
-}*/
-
+//  Function to compute the Mean square error with 
 double Image::Diff(const Image &img) const
 {
     double MSE = 0;
@@ -302,36 +264,14 @@ double Image::Diff(const Image &img) const
 	return MSE;
 }
 
+//  Method to choose an image from a library (library is not loaded)
 Image Image::ChooseImage(const std::string &cFolderName) const
 {
     std::vector<Image> sLibrary = GetFromFolder(cFolderName);
     return ChooseImage(sLibrary);
 }
 
-/*Image Image::ChooseImage(std::vector<Image> &sLibrary) const
-{
-    std::vector<Image>::iterator iter = sLibrary.begin();
-    Image sResultImage = *sLibrary.begin();
-    double dDiff = Diff(sResultImage);
-    iter++;
-    while (iter != sLibrary.end()) 
-    {
-        double dDiffNew = Diff(*iter);
-        if (dDiffNew < dDiff)
-        {
-            dDiff = dDiffNew;
-            sResultImage = *iter;
-        }
-        //  Stopping condition : in case of the image is already a mosaic
-        if (dDiffNew < 1)
-        {
-            break;
-        }
-        iter++;
-    }
-    return sResultImage;
-}*/
-
+//  Method to choose an image from a library (library is loaded)
 Image Image::ChooseImage(const std::vector<Image> &sLibrary) const
 {
     std::vector<Image>::const_iterator iter = sLibrary.begin();
@@ -356,25 +296,7 @@ Image Image::ChooseImage(const std::vector<Image> &sLibrary) const
     return sResultImage;
 }
 
-/*Image Image::mergeImage(std::vector<std::vector<Image> > & elements, const std::string &cFolderName)
-{
-	Image result ((int)elements[0].size() * 24, (int)elements.size() * 24);
-	Image square(24,24);
-
-	for(unsigned int x = 0; x < elements.size(); x ++)
-		for(unsigned int y = 0; y < elements[0].size(); y ++)
-		{
-			square = elements[x][y].ChooseImage(cFolderName);
-			for(int a = 0; a < 24; a ++)
-				for(int b = 0; b < 24; b ++)
-					for(int c = 0; c < 3; c++)
-					{
-						result(24 * x + a, 24 * y + b, c) = square(a,b,c);
-					}
-		}
-	return result;
-}*/
-
+//  Method to merge an image knowing the name of library folder
 Image Image::mergeImage(const std::vector<std::vector<Image> > & elements, const std::string &cFolderName)
 {
 	Image result ((int)elements[0].size() * 24, (int)elements.size() * 24);
@@ -394,6 +316,7 @@ Image Image::mergeImage(const std::vector<std::vector<Image> > & elements, const
 	return result;
 }
 
+//  Method to merge an image if the library is already loaded
 Image Image::mergeImage(const std::vector<std::vector<Image> > & elements, std::vector<Image> & sLibrary)
 {
     int iSizex = (int)elements.size() * 24, iSizey = (int)elements[0].size() * 24;
@@ -414,26 +337,7 @@ Image Image::mergeImage(const std::vector<std::vector<Image> > & elements, std::
 	return result;
 }
 
-/*Image Image::mergeImage(std::vector<std::vector<Image> > & elements, std::vector<Image> & sLibrary)
-{
-    int iSizex = (int)elements.size() * 24, iSizey = (int)elements[0].size() * 24;
-	Image result (iSizex, iSizey);
-	Image square(24,24);
-    
-	for(unsigned int x = 0; x < elements.size(); x ++)
-		for(unsigned int y = 0; y < elements[0].size(); y ++)
-		{
-			square = elements[x][y].ChooseImage(sLibrary);
-			for(int a = 0; a < 24; a ++)
-				for(int b = 0; b < 24; b ++)
-					for(int c = 0; c < 3; c++)
-					{
-						result(24 * x + a, 24 * y + b, c) = square(a,b,c);
-					}
-		}
-	return result;
-}*/
-
+//  Method to flip horizontally the images
 void Image::flipHorizontally()
 {
 	for(int y=0; y < iHeight_ / 2; y ++)
@@ -451,7 +355,7 @@ void Image::flipHorizontally()
 }
 
 //  Function to resize an image of size iWidth * iHeight into a 24 * 24 one
-Image Image::Resize24()
+Image Image::Resize24() 
 {
     Image sResult(24, 24);
     
@@ -463,8 +367,7 @@ Image Image::Resize24()
                 for (int y = 0 ; y < iHeight_ / 24 ; ++y)
                     for (int x = 0 ; x < iWidth_ / 24 ; ++x)
                         cVect.push_back((*this)(a * iWidth_ / 24 + x, b * iHeight_ / 24 + y,c));
-                //sResult(a,b,c) = myMean(cVect);
-                sResult(a,b,c) = myMean2(cVect);
+                sResult(a,b,c) = myMean(cVect);
             }
     return sResult;
 }
